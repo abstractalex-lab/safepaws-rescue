@@ -21,11 +21,12 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../connection.php';
 
 // Absolute site-root path, independent of how deep the including page sits
-$loginUrl = '/' . trim(str_replace(
-        $_SERVER['DOCUMENT_ROOT'],
-        '',
-        __DIR__
-    ), '/\\') . '/login.php';
+// Normalize to forward slashes first - on Windows, DOCUMENT_ROOT and __DIR__
+// often use different slash directions, which breaks a literal str_replace.
+$documentRoot = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']);
+$currentDir   = str_replace('\\', '/', __DIR__);
+
+$loginUrl = '/' . trim(str_replace($documentRoot, '', $currentDir), '/') . '/login.php';
 
 $authenticated = false;
 
