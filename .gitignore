@@ -1,3 +1,4 @@
+# PHPStorm (existing)
 .idea
 # Default ignored files
 /shelf/
@@ -9,3 +10,8 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
