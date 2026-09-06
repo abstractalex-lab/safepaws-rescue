@@ -12,9 +12,13 @@ session_start();
 require_once __DIR__ . '/connection.php';
 
 $current_user = null;
+
+// Skip the DB check entirely if no user_id was ever set in session
 if (isset($_SESSION['user_id'])) {
     $stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = :id AND status = 'active'");
     $stmt->execute(['id' => $_SESSION['user_id']]);
+
+    // Confirms a live, active match exists right now - not just that the session var is present
     if ($stmt->rowCount() === 1) {
         $current_user = $stmt->fetchObject();
     }

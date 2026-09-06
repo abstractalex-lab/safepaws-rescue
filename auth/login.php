@@ -14,6 +14,7 @@ require_once __DIR__ . '/../connection.php';
 
 $error = null;
 
+// Only process the form if it was submitted via POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -28,8 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $authenticated = false;
 
+        // Confirms a live, active match exists right now - not just that the username was typed correctly
         if ($stmt->rowCount() === 1) {
             $user = $stmt->fetchObject();
+
+            // password_verify() re-derives the salt from the stored hash and compares safely
             if (password_verify($password, $user->password)) {
                 $authenticated = true;
             }
