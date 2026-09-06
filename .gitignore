@@ -15,3 +15,7 @@
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Local DB credentials - each teammate creates their own from
+# config.local.example.php. Never commit real/shared credentials here.
+config.local.php
