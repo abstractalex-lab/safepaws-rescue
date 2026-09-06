@@ -2,20 +2,25 @@
 
 ?>
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <!-- Link your external CSS stylesheet here -->
-    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <title>Login - SafePaws Admin</title>
 </head>
 <body>
+<h1>Admin Login</h1>
 
-<!-- Your visible website content goes here -->
+<form method="post" action="login.php">
+    <label for="username">Username</label><br>
+    <input type="text" id="username" name="username" required>
+    <br><br>
 
-<!-- Link your external JavaScript file here -->
-<script src="script.js"></script>
+    <label for="password">Password</label><br>
+    <input type="password" id="password" name="password" required>
+    <br><br>
+
+    <button type="submit">Login</button>
+</form>
 </body>
 </html>
