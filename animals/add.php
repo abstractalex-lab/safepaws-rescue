@@ -5,37 +5,20 @@
  * Species -> breed selection uses a cascading dropdown. Foster carer assignment is optional and limited to active
  * carers only. Profile image upload is optional; the original filename is never trusted - a new name is generated
  * server-side before saving into animal_profiles/.
+ *
+ * @var PDO $pdo
+ * @var array $statusLabels
+ * @var array $species
+ * @var array $breeds
+ * @var array $fosterCarers
  */
 
+// Start session and include necessary files
 session_start();
 require_once __DIR__ . '/../auth/authentication.php';
-
-/** @var PDO $pdo */
 require_once __DIR__ . '/../connection.php';
-
-$statusLabels = [
-    'in_care'   => 'In care',
-    'available' => 'Available for adoption',
-    'pending'   => 'Adoption pending',
-    'adopted'   => 'Adopted',
-];
-
-// All species + all breeds (grouped by species in JS) for the cascading dropdown. Unknown/Mixed are always listed last.
-$species = $pdo->query(
-    "SELECT species_id, species_name
-     FROM species
-     ORDER BY (species_name = 'Unknown'), species_name"
-)->fetchAll();
-$breeds  = $pdo->query(
-    "SELECT breed_id, species_id, breed_name
-     FROM breeds
-     ORDER BY (breed_name LIKE 'Mixed%' OR breed_name = 'Unknown'), breed_name"
-)->fetchAll();
-
-// Only active foster carers can receive a new assignment
-$fosterCarers = $pdo->query(
-    "SELECT foster_carer_id, first_name, last_name FROM foster_carers WHERE status = 'active' ORDER BY first_name"
-)->fetchAll();
+require_once __DIR__ . '/../includes/animal_helpers.php';
+require_once __DIR__ . '/_form_data.php';
 
 $errors = [];
 $old = $_POST; // used to re-populate the form if validation fails
@@ -269,35 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <br>
 <p><a href="index.php">Back to Animal List</a></p>
 
-<script>
-    // Breed data grouped by species, embedded directly since the dataset is small and static
-    const breedsBySpecies = {};
-    <?php foreach ($species as $s): ?>
-    breedsBySpecies[<?= $s['species_id'] ?>] = [
-        <?php foreach ($breeds as $b): ?>
-        <?php if ($b['species_id'] == $s['species_id']): ?>
-        { id: <?= $b['breed_id'] ?>, name: <?= json_encode($b['breed_name']) ?> },
-        <?php endif; ?>
-        <?php endforeach; ?>
-    ];
-    <?php endforeach; ?>
-
-    const oldBreedId = <?= json_encode($old['breed_id'] ?? null) ?>;
-    const oldSpeciesId = <?php
-        // Pre-select matching the previously submitted breed, so failed validation re-populates the form correctly
-        $oldSpeciesId = null;
-        if (!empty($old['breed_id'])) {
-            foreach ($breeds as $b) {
-                if ($b['breed_id'] == $old['breed_id']) {
-                    $oldSpeciesId = $b['species_id'];
-                    break;
-                }
-            }
-        }
-        echo json_encode($oldSpeciesId);
-        ?>;
-</script>
-<script src="../js/animal-form.js"></script>
+<?php require __DIR__ . '/_form_scripts.php'; ?>
 </body>
 </html>
 

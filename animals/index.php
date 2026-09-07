@@ -4,13 +4,16 @@
  *
  * Displays all animals with their species, breed, and foster carer (where assigned).
  * Unfiltered for now - search/filter to be added as a follow-up pass once this base query/display is confirmed working.
+ *
+ * @var PDO $pdo
+ * @var array $statusLabels
  */
 
+// Start session and include necessary files
 session_start();
 require_once __DIR__ . '/../auth/authentication.php';
-
-/** @var PDO $pdo */
 require_once __DIR__ . '/../connection.php';
+require_once __DIR__ . '/../includes/animal_helpers.php';
 
 // breed_id is NOT NULL on every animal, so an inner join is appropriate
 // foster_carer_id is nullable, so that uses a LEFT JOIN
@@ -24,14 +27,6 @@ $stmt = $pdo->query(
      ORDER BY a.name"
 );
 $animals = $stmt->fetchAll();
-
-// Maps the ENUM's internal snake_case values to the display wording from the brief
-$statusLabels = [
-    'in_care'   => 'In care',
-    'available' => 'Available for adoption',
-    'pending'   => 'Adoption pending',
-    'adopted'   => 'Adopted',
-];
 ?>
 
 <!DOCTYPE html>

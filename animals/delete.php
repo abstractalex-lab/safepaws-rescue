@@ -2,37 +2,33 @@
 /**
  * Delete animal (admin).
  *
- * GET shows a confirmation page with the animal's details; the actual
- * delete only runs on POST, so a stray GET (prefetch, pasted URL,
- * crawler) can't destroy a record.
+ * GET shows a confirmation page with the animal's details, after that run delete via POST,
+ * prevents a stray GET (prefetch, pasted URL, crawler) can't destroy a record.
  *
  * adoption_applications.animal_id is ON DELETE RESTRICT, so deleting an
  * animal that has applications on record will fail at the database level.
  * That's deliberate - application history shouldn't disappear with the
  * animal - so the constraint violation is caught and reported in plain
  * language rather than surfacing as a raw SQL error.
+ *
+ * @var PDO $pdo
+ * @var array $statusLabels
  */
 
+// Start session and include necessary files
 session_start();
 require_once __DIR__ . '/../auth/authentication.php';
-
-/** @var PDO $pdo */
 require_once __DIR__ . '/../connection.php';
+require_once __DIR__ . '/../includes/animal_helpers.php';
 
-$statusLabels = [
-    'in_care'   => 'In care',
-    'available' => 'Available for adoption',
-    'pending'   => 'Adoption pending',
-    'adopted'   => 'Adopted',
-];
-
+// Get the animal ID from either GET or POST, and validate it as a positive integer
 $animalId = $_GET['id'] ?? $_POST['animal_id'] ?? '';
-
 if (!ctype_digit((string) $animalId)) {
     header("Location: index.php?error=invalid");
     exit;
 }
 
+// Fetch the animal's details, including species and breed names, for display on the confirmation page
 $stmt = $pdo->prepare(
     "SELECT a.*, s.species_name, b.breed_name
      FROM animals a
@@ -48,8 +44,7 @@ if (!$animal) {
     exit;
 }
 
-// Shown on the confirmation page so the user knows up front that this
-// animal can't be deleted, rather than finding out after clicking.
+// Shown on the confirmation page so the user knows up front that this animal can't be deleted
 $appStmt = $pdo->prepare("SELECT COUNT(*) FROM adoption_applications WHERE animal_id = ?");
 $appStmt->execute([$animalId]);
 $applicationCount = (int) $appStmt->fetchColumn();
@@ -61,8 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $delete = $pdo->prepare("DELETE FROM animals WHERE animal_id = ?");
         $delete->execute([$animalId]);
 
-        // The row is gone, so its image is now unreferenced. File deletion
-        // can't be rolled back, so it deliberately happens only after delete succeeds
+        // Delete image after removed the database record
         if ($animal['profile_image']) {
             $imagePath = __DIR__ . '/../' . $animal['profile_image'];
             if (is_file($imagePath)) {

@@ -9,20 +9,18 @@
  *   the DB update commits successfully.
  * - If the animal is currently assigned to a foster carer who has since gone inactive, that carer still
  *   appears (disabled) and remains valid on submit, so editing an unrelated field doesn't silently drop it.
+ *
+ * @var PDO $pdo
+ * @var array $statusLabels
+ * @var array $species
+ * @var array $breeds
+ * @var array $fosterCarers
  */
 
 session_start();
 require_once __DIR__ . '/../auth/authentication.php';
-
-/** @var PDO $pdo */
 require_once __DIR__ . '/../connection.php';
-
-$statusLabels = [
-    'in_care'   => 'In care',
-    'available' => 'Available for adoption',
-    'pending'   => 'Adoption pending',
-    'adopted'   => 'Adopted',
-];
+require_once __DIR__ . '/../includes/animal_helpers.php';
 
 $animalId = $_GET['id'] ?? $_POST['animal_id'] ?? '';
 
@@ -42,28 +40,10 @@ if (!$animal) {
     exit;
 }
 
-// Load species and breeds for the dropdowns, with "Unknown" and "Mixed" first
-$species = $pdo->query(
-    "SELECT species_id, species_name
-     FROM species
-     ORDER BY (species_name = 'Unknown'), species_name"
-)->fetchAll();
-
-$breeds = $pdo->query(
-    "SELECT breed_id, species_id, breed_name
-     FROM breeds
-     ORDER BY (breed_name LIKE 'Mixed%' OR breed_name = 'Unknown'), breed_name"
-)->fetchAll();
-
-// Query active carers, plus the currently assigned one even if it has gone inactive
-$carerStmt = $pdo->prepare(
-    "SELECT foster_carer_id, first_name, last_name, status
-     FROM foster_carers
-     WHERE status = 'active' OR foster_carer_id = ?
-     ORDER BY first_name"
-);
-$carerStmt->execute([$animal['foster_carer_id']]);
-$fosterCarers = $carerStmt->fetchAll();
+// Must be set before _form_data.php runs - it uses this to keep an
+// already-assigned but now-inactive carer in the dropdown.
+$currentFosterCarerId = $animal['foster_carer_id'];
+require_once __DIR__ . '/_form_data.php';
 
 $errors = [];
 
@@ -360,32 +340,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <br>
 <p><a href="index.php">Back to Animal List</a></p>
 
-<script>
-    const breedsBySpecies = {};
-    <?php foreach ($species as $s): ?>
-    breedsBySpecies[<?= $s['species_id'] ?>] = [
-        <?php foreach ($breeds as $b): ?>
-        <?php if ($b['species_id'] == $s['species_id']): ?>
-        { id: <?= $b['breed_id'] ?>, name: <?= json_encode($b['breed_name']) ?> },
-        <?php endif; ?>
-        <?php endforeach; ?>
-    ];
-    <?php endforeach; ?>
-
-    const oldBreedId = <?= json_encode($old['breed_id'] ?? null) ?>;
-    const oldSpeciesId = <?php
-        $oldSpeciesId = null;
-        if (!empty($old['breed_id'])) {
-            foreach ($breeds as $b) {
-                if ($b['breed_id'] == $old['breed_id']) {
-                    $oldSpeciesId = $b['species_id'];
-                    break;
-                }
-            }
-        }
-        echo json_encode($oldSpeciesId);
-        ?>;
-</script>
-<script src="../js/animal-form.js"></script>
+<?php require __DIR__ . '/_form_scripts.php'; ?>
 </body>
 </html>
