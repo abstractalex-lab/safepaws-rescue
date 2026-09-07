@@ -32,3 +32,8 @@ try {
     error_log("DB connection failed: " . $e->getMessage()); // server-side log only
     die("Unable to connect to the database. Please contact the site administrator.");
 }
+
+// $pdo is defined globally
+if (!isset($pdo)) {
+    die("Database connection could not be established.");
+}
