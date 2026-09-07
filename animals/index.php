@@ -53,30 +53,38 @@ $statusLabels = [
 <?php if (count($animals) === 0): ?>
     <p>No animals found.</p>
 <?php else: ?>
-<table border="1" cellpadding="6">
-    <thead>
+    <table border="1" cellpadding="6">
         <tr>
             <th>Name</th>
             <th>Species</th>
             <th>Breed</th>
+            <th>Sex</th>
             <th>Status</th>
             <th>Foster Carer</th>
             <th>Actions</th>
         </tr>
-    </thead>
-    <tbody>
         <?php foreach ($animals as $animal): ?>
             <tr>
-                <td><?= htmlspecialchars($animal['name']) ?></td>
-                <td><?= htmlspecialchars($animal['species_name']) ?></td>
-                <td><?= htmlspecialchars($animal['breed_name']) ?></td>
-                <td><?= htmlspecialchars($statusLabels[$animal['status']]) ?></td>
-                <td><?= $animal['foster_first_name'] ? htmlspecialchars($animal['foster_first_name'] . ' ' . $animal['foster_last_name']) : 'N/A' ?></td>
-                <td><a href="edit.php?id=<?= $animal['animal_id'] ?>">Edit</a></td>
+                <td><?= htmlentities($animal['name']) ?></td>
+                <td><?= htmlentities($animal['species_name']) ?></td>
+                <td><?= htmlentities($animal['breed_name']) ?></td>
+                <td><?= htmlentities(ucfirst($animal['sex'])) ?></td>
+                <td><?= htmlentities($statusLabels[$animal['status']] ?? $animal['status']) ?></td>
+                <td>
+                    <?php if ($animal['foster_first_name']): ?>
+                        <?= htmlentities($animal['foster_first_name'] . ' ' . $animal['foster_last_name']) ?>
+                    <?php else: ?>
+                        <em>Not fostered</em>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <a href="view.php?id=<?= $animal['animal_id'] ?>">View</a> |
+                    <a href="edit.php?id=<?= $animal['animal_id'] ?>">Edit</a> |
+                    <a href="delete.php?id=<?= $animal['animal_id'] ?>">Delete</a>
+                </td>
             </tr>
         <?php endforeach; ?>
-    </tbody>
-</table>
+    </table>
 <?php endif; ?>
 
 </body>
