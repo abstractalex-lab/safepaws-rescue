@@ -90,8 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fosterCarerId = null;
     }
 
-    // Relationship checks - defends against a tampered POST bypassing the
-    // dropdown, not just trusting that the <select> options are safe
+    // Relationship checks - defends against a tampered POST bypassing the dropdown
     if (empty($errors) && $breedId !== '') {
         $check = $pdo->prepare("SELECT COUNT(*) FROM breeds WHERE breed_id = ?");
         $check->execute([$breedId]);
@@ -107,8 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Image upload - validated but not saved to disk until every other
-    // field has passed, so a failed submission never leaves an orphaned file
+    // Image upload - only save to disk until other fields have passed, prevents failed submission from leaving an orphaned file
     $profileImage = null;
     if (empty($errors) && !empty($_FILES['profile_image']['name'])) {
         $allowedExt = ['jpg', 'jpeg', 'png', 'gif'];
@@ -121,8 +119,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($_FILES['profile_image']['size'] > 5 * 1024 * 1024) {
             $errors[] = "Profile image must be smaller than 5MB.";
         } else {
-            // Server-generated filename - never trust the uploaded name,
-            // which avoids path traversal and filename-collision issues
+
+            // Server-generated filename, avoids path traversal and filename-collision issues
             $newFilename = 'animal_' . uniqid() . '.' . $ext;
             $destination = __DIR__ . '/../animal_profiles/' . $newFilename;
 
@@ -272,8 +270,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <p><a href="index.php">Back to Animal List</a></p>
 
 <script>
-    // Breed data grouped by species, embedded directly since the dataset
-    // is small - no AJAX round-trip needed for a cascading dropdown.
+    // Breed data grouped by species, embedded directly since the dataset is small and static
     const breedsBySpecies = {};
     <?php foreach ($species as $s): ?>
     breedsBySpecies[<?= $s['species_id'] ?>] = [
@@ -287,8 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     const oldBreedId = <?= json_encode($old['breed_id'] ?? null) ?>;
     const oldSpeciesId = <?php
-        // Pre-select the species matching the previously submitted breed,
-        // so a failed validation re-populates both dropdowns correctly.
+        // Pre-select matching the previously submitted breed, so failed validation re-populates the form correctly
         $oldSpeciesId = null;
         if (!empty($old['breed_id'])) {
             foreach ($breeds as $b) {
