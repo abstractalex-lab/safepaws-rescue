@@ -1,5 +1,19 @@
 <?php
 // includes/navbar.php
+// check if user is logged in for the navbar display
+/** @var PDO $pdo */
+$current_user = null;
+if (isset($_SESSION['user_id'])) {
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = :id AND status = 'active'");
+        $stmt->execute(['id' => $_SESSION['user_id']]);
+        if ($stmt->rowCount() === 1) {
+            $current_user = $stmt->fetchObject();
+        }
+    } catch (PDOException $e) {
+        // silent fail
+    }
+}
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
@@ -13,52 +27,35 @@
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="../index.php">
-                        <i class="bi bi-speedometer2"></i> Dashboard
+                        <i class="bi bi-house"></i> Home
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../animals/list.php">
-                        <i class="bi bi-paw"></i> Animals
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../foster_carers/list.php">
-                        <i class="bi bi-people"></i> Foster Carers
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="list.php">
+                    <a class="nav-link" href="../partner_organisations/list.php">
                         <i class="bi bi-building"></i> Partners
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../applications/list.php">
-                        <i class="bi bi-file-text"></i> Applications
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../contact/list.php">
-                        <i class="bi bi-envelope"></i> Messages
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../users/list.php">
-                        <i class="bi bi-person-gear"></i> Users
                     </a>
                 </li>
             </ul>
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <span class="navbar-text me-3">
-                        <i class="bi bi-person-circle"></i>
-                        <?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin') ?>
-                    </span>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link btn btn-outline-danger btn-sm" href="../auth/logout.php">
-                        <i class="bi bi-box-arrow-right"></i> Logout
-                    </a>
-                </li>
+                <?php if ($current_user): ?>
+                    <li class="nav-item">
+                        <span class="navbar-text me-3">
+                            <i class="bi bi-person-circle"></i>
+                            <?= htmlspecialchars($current_user->first_name ?? 'Admin') ?>
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-danger btn-sm" href="../auth/logout.php">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../auth/login.php">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
+                    </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>
