@@ -7,4 +7,4 @@
 define('DB_HOSTNAME', 'localhost');
 define('DB_USERNAME', 'CHANGE_ME');
 define('DB_PASSWORD', 'CHANGE_ME');
-define('DB_NAME', 'fit2104_a3');
+define('DB_NAME', 'fit2104_a3'); // or whatever your local database name is
