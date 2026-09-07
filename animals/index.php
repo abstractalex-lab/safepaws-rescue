@@ -42,7 +42,6 @@ $statusLabels = [
     <title>Animals - SafePaws Admin</title>
 </head>
 <body>
-<!-- Your visible website content goes here -->
 <h1>Animals</h1>
 <br>
 
