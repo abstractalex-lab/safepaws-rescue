@@ -20,9 +20,17 @@ $statusLabels = [
     'adopted'   => 'Adopted',
 ];
 
-// All species + all breeds (grouped by species in JS) for the cascading dropdown
-$species = $pdo->query("SELECT species_id, species_name FROM species ORDER BY species_name")->fetchAll();
-$breeds  = $pdo->query("SELECT breed_id, species_id, breed_name FROM breeds ORDER BY breed_name")->fetchAll();
+// All species + all breeds (grouped by species in JS) for the cascading dropdown. Unknown/Mixed are always listed last.
+$species = $pdo->query(
+    "SELECT species_id, species_name
+     FROM species
+     ORDER BY (species_name = 'Unknown'), species_name"
+)->fetchAll();
+$breeds  = $pdo->query(
+    "SELECT breed_id, species_id, breed_name
+     FROM breeds
+     ORDER BY (breed_name LIKE 'Mixed%' OR breed_name = 'Unknown'), breed_name"
+)->fetchAll();
 
 // Only active foster carers can receive a new assignment
 $fosterCarers = $pdo->query(
@@ -168,11 +176,132 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Add Animal - SafePaws Admin</title>
 </head>
 <body>
-<!-- Your visible website content goes here -->
+<h1>Add Animal</h1>
+<br>
 
+<?php if (!empty($errors)): ?>
+    <ul style="color:red;">
+        <?php foreach ($errors as $error): ?>
+            <li><?= htmlentities($error) ?></li>
+        <?php endforeach; ?>
+    </ul>
+<?php endif; ?>
 
-<!-- Link your external JavaScript file here -->
-<script src="script.js"></script>
+<form method="post" action="add.php" enctype="multipart/form-data">
+
+    <label for="name">Name</label><br>
+    <input type="text" id="name" name="name" value="<?= htmlentities($old['name'] ?? '') ?>" required>
+    <br><br>
+
+    <label for="species">Species</label><br>
+    <select id="species" onchange="updateBreeds()">
+        <?php foreach ($species as $s): ?>
+            <option value="<?= $s['species_id'] ?>"><?= htmlentities($s['species_name']) ?></option>
+        <?php endforeach; ?>
+    </select>
+    <br><br>
+
+    <label for="breed_id">Breed</label><br>
+    <select id="breed_id" name="breed_id" required></select>
+    <br><br>
+
+    <label for="sex">Sex</label><br>
+    <select id="sex" name="sex" required>
+        <option value="male" <?= ($old['sex'] ?? '') === 'male' ? 'selected' : '' ?>>Male</option>
+        <option value="female" <?= ($old['sex'] ?? '') === 'female' ? 'selected' : '' ?>>Female</option>
+        <option value="unknown" <?= ($old['sex'] ?? '') === 'unknown' ? 'selected' : '' ?>>Unknown</option>
+    </select>
+    <br><br>
+
+    <label for="desexed">
+        <input type="checkbox" id="desexed" name="desexed" <?= isset($old['desexed']) ? 'checked' : '' ?>>
+        Desexed
+    </label>
+    <br><br>
+
+    <label for="date_of_birth">Date of Birth (leave blank if unknown)</label><br>
+    <input type="date" id="date_of_birth" name="date_of_birth"
+           max="<?= date('Y-m-d') ?>"
+           value="<?= htmlentities($old['date_of_birth'] ?? '') ?>">
+    <br><br>
+
+    <label for="date_admitted">Date Admitted</label><br>
+    <input type="date" id="date_admitted" name="date_admitted"
+           max="<?= date('Y-m-d') ?>"
+           value="<?= htmlentities($old['date_admitted'] ?? date('Y-m-d')) ?>" required>
+    <br><br>
+
+    <label for="description">Description</label><br>
+    <textarea id="description" name="description" rows="3" cols="50"><?= htmlentities($old['description'] ?? '') ?></textarea>
+    <br><br>
+
+    <label for="medical_notes">Medical Notes</label><br>
+    <textarea id="medical_notes" name="medical_notes" rows="3" cols="50"><?= htmlentities($old['medical_notes'] ?? '') ?></textarea>
+    <br><br>
+
+    <label for="status">Status</label><br>
+    <select id="status" name="status" required>
+        <?php foreach ($statusLabels as $value => $label): ?>
+            <option value="<?= $value ?>" <?= ($old['status'] ?? '') === $value ? 'selected' : '' ?>>
+                <?= htmlentities($label) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <br><br>
+
+    <label for="foster_carer_id">Foster Carer (optional)</label><br>
+    <select id="foster_carer_id" name="foster_carer_id">
+        <option value="">-- Not assigned --</option>
+        <?php foreach ($fosterCarers as $fc): ?>
+            <option value="<?= $fc['foster_carer_id'] ?>"
+                <?= ($old['foster_carer_id'] ?? '') == $fc['foster_carer_id'] ? 'selected' : '' ?>>
+                <?= htmlentities($fc['first_name'] . ' ' . $fc['last_name']) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <br><br>
+
+    <label for="profile_image">Profile Image (optional)</label><br>
+    <input type="file" id="profile_image" name="profile_image" accept=".jpg,.jpeg,.png,.gif">
+    <br><br>
+
+    <button type="submit">Add Animal</button>
+</form>
+
+<br>
+<p><a href="index.php">Back to Animal List</a></p>
+
+<script>
+    // Breed data grouped by species, embedded directly since the dataset
+    // is small - no AJAX round-trip needed for a cascading dropdown.
+    const breedsBySpecies = {};
+    <?php foreach ($species as $s): ?>
+    breedsBySpecies[<?= $s['species_id'] ?>] = [
+        <?php foreach ($breeds as $b): ?>
+        <?php if ($b['species_id'] == $s['species_id']): ?>
+        { id: <?= $b['breed_id'] ?>, name: <?= json_encode($b['breed_name']) ?> },
+        <?php endif; ?>
+        <?php endforeach; ?>
+    ];
+    <?php endforeach; ?>
+
+    const oldBreedId = <?= json_encode($old['breed_id'] ?? null) ?>;
+    const oldSpeciesId = <?php
+        // Pre-select the species matching the previously submitted breed,
+        // so a failed validation re-populates both dropdowns correctly.
+        $oldSpeciesId = null;
+        if (!empty($old['breed_id'])) {
+            foreach ($breeds as $b) {
+                if ($b['breed_id'] == $old['breed_id']) {
+                    $oldSpeciesId = $b['species_id'];
+                    break;
+                }
+            }
+        }
+        echo json_encode($oldSpeciesId);
+        ?>;
+</script>
+<script src="../js/animal-form.js"></script>
 </body>
 </html>
 
