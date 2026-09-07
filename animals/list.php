@@ -41,14 +41,43 @@ $statusLabels = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animals - SafePaws Admin</title>
-    <!-- Link your external CSS file here -->
-    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <!-- Your visible website content goes here -->
+<h1>Animals</h1>
+<br>
 
-<!-- Link your external JavaScript file here -->
-<script src="script.js"></script>
+<p><a href="add.php">Add New Animal</a></p>
+<br>
+
+<?php if (count($animals) === 0): ?>
+    <p>No animals found.</p>
+<?php else: ?>
+<table border="1" cellpadding="6">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Species</th>
+            <th>Breed</th>
+            <th>Status</th>
+            <th>Foster Carer</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach ($animals as $animal): ?>
+            <tr>
+                <td><?= htmlspecialchars($animal['name']) ?></td>
+                <td><?= htmlspecialchars($animal['species_name']) ?></td>
+                <td><?= htmlspecialchars($animal['breed_name']) ?></td>
+                <td><?= htmlspecialchars($statusLabels[$animal['status']]) ?></td>
+                <td><?= $animal['foster_first_name'] ? htmlspecialchars($animal['foster_first_name'] . ' ' . $animal['foster_last_name']) : 'N/A' ?></td>
+                <td><a href="edit.php?id=<?= $animal['animal_id'] ?>">Edit</a></td>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
+</table>
+<?php endif; ?>
+
 </body>
 </html>
