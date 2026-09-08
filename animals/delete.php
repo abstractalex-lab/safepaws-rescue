@@ -67,8 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: index.php?deleted=1");
         exit;
     } catch (PDOException $e) {
-        // SQLSTATE 23000 is an integrity constraint violation - here that
-        // means the RESTRICT foreign key on adoption_applications.
+        // SQLSTATE 23000 is an integrity constraint violation; this means the RESTRICT foreign key on adoption_applications prevented the deletion
+        // Catch that and show a user-friendly message instead of a raw SQL error
         if ($e->getCode() === '23000') {
             $error = "This animal cannot be deleted because it has adoption applications on record. "
                 . "Remove those applications first if the animal really needs to be deleted.";
