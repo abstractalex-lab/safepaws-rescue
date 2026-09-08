@@ -2,6 +2,7 @@
 // foster_carers/list.php
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
+require_once __DIR__ . '/../includes/csrf.php';
 /** @var PDO $pdo */
 
 $success_message = $_SESSION['success_message'] ?? null;
@@ -82,14 +83,14 @@ $total_count = $total_stmt->fetchColumn();
 
     <?php if ($success_message): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle"></i> <?= htmlspecialchars($success_message) ?>
+            <i class="bi bi-check-circle"></i> <?= htmlspecialchars($success_message, ENT_QUOTES) ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
 
     <?php if ($error_message): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle"></i> <?= htmlspecialchars($error_message) ?>
+            <i class="bi bi-exclamation-triangle"></i> <?= htmlspecialchars($error_message, ENT_QUOTES) ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -100,13 +101,13 @@ $total_count = $total_stmt->fetchColumn();
                 <div class="col-md-5">
                     <input type="text" class="form-control" name="search"
                            placeholder="Search by name or email..."
-                           value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+                           value="<?= htmlspecialchars($_GET['search'] ?? '', ENT_QUOTES) ?>">
                 </div>
                 <div class="col-md-3">
                     <select class="form-select" name="status">
                         <option value="">All Statuses</option>
-                        <option value="active" <?= (isset($_GET['status']) && $_GET['status'] == 'active') ? 'selected' : '' ?>>Active</option>
-                        <option value="inactive" <?= (isset($_GET['status']) && $_GET['status'] == 'inactive') ? 'selected' : '' ?>>Inactive</option>
+                        <option value="active" <?= (($_GET['status'] ?? '') === 'active') ? 'selected' : '' ?>>Active</option>
+                        <option value="inactive" <?= (($_GET['status'] ?? '') === 'inactive') ? 'selected' : '' ?>>Inactive</option>
                     </select>
                 </div>
                 <div class="col-md-4">
@@ -138,58 +139,54 @@ $total_count = $total_stmt->fetchColumn();
                 </tr>
                 </thead>
                 <tbody>
-                <?php if (count($foster_carers) > 0): ?>
-                    <?php foreach ($foster_carers as $carer): ?>
-                        <tr>
-                            <td><?= $carer['foster_carer_id'] ?></td>
-                            <td><?= htmlspecialchars($carer['first_name'] . ' ' . $carer['last_name']) ?></td>
-                            <td>
-                                <a href="mailto:<?= htmlspecialchars($carer['email']) ?>">
-                                    <i class="bi bi-envelope"></i>
-                                </a>
-                            </td>
-                            <td><?= htmlspecialchars($carer['phone'] ?? 'N/A') ?></td>
-                            <td><?= htmlspecialchars($carer['suburb'] ?? 'N/A') ?></td>
-                            <td><?= htmlspecialchars($carer['preferred_animal_type'] ?? 'Any') ?></td>
-                            <td><?= $carer['capacity'] ?></td>
-                            <td>
-                                <?php if ($carer['status'] == 'active'): ?>
-                                    <span class="badge bg-success">Active</span>
-                                <?php else: ?>
-                                    <span class="badge bg-secondary">Inactive</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <a href="view.php?id=<?= $carer['foster_carer_id'] ?>"
-                                       class="btn btn-sm btn-info" title="View">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="edit.php?id=<?= $carer['foster_carer_id'] ?>"
-                                       class="btn btn-sm btn-warning" title="Edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a href="toggle_status.php?id=<?= $carer['foster_carer_id'] ?>"
-                                       class="btn btn-sm <?= $carer['status'] == 'active' ? 'btn-secondary' : 'btn-success' ?>"
-                                       title="<?= $carer['status'] == 'active' ? 'Deactivate' : 'Activate' ?>">
-                                        <i class="bi <?= $carer['status'] == 'active' ? 'bi-pause-circle' : 'bi-play-circle' ?>"></i>
-                                    </a>
-                                    <button onclick="confirmDelete(<?= $carer['foster_carer_id'] ?>, '<?= htmlspecialchars($carer['first_name'] . ' ' . $carer['last_name']) ?>')"
-                                            class="btn btn-sm btn-danger" title="Delete">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
+                <?php foreach ($foster_carers as $carer): ?>
                     <tr>
-                        <td colspan="9" class="text-center text-muted">
-                            <i class="bi bi-inbox"></i> No foster carers found.
-                            <a href="add.php">Add your first foster carer</a>
+                        <td><?= $carer['foster_carer_id'] ?></td>
+                        <td><?= htmlspecialchars($carer['first_name'] . ' ' . $carer['last_name'], ENT_QUOTES) ?></td>
+                        <td>
+                            <a href="mailto:<?= htmlspecialchars($carer['email'], ENT_QUOTES) ?>">
+                                <i class="bi bi-envelope"></i>
+                            </a>
+                        </td>
+                        <td><?= htmlspecialchars($carer['phone'] ?? 'N/A', ENT_QUOTES) ?></td>
+                        <td><?= htmlspecialchars($carer['suburb'] ?? 'N/A', ENT_QUOTES) ?></td>
+                        <td><?= htmlspecialchars($carer['preferred_animal_type'] ?? 'Any', ENT_QUOTES) ?></td>
+                        <td><?= $carer['capacity'] ?></td>
+                        <td>
+                            <?php if ($carer['status'] == 'active'): ?>
+                                <span class="badge bg-success">Active</span>
+                            <?php else: ?>
+                                <span class="badge bg-secondary">Inactive</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="view.php?id=<?= $carer['foster_carer_id'] ?>"
+                                   class="btn btn-sm btn-info" title="View">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="edit.php?id=<?= $carer['foster_carer_id'] ?>"
+                                   class="btn btn-sm btn-warning" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form method="POST" action="toggle_status.php" class="d-inline">
+                                    <?= csrf_field() ?>
+                                    <input type="hidden" name="id" value="<?= $carer['foster_carer_id'] ?>">
+                                    <button type="submit"
+                                            class="btn btn-sm <?= $carer['status'] == 'active' ? 'btn-secondary' : 'btn-success' ?>"
+                                            title="<?= $carer['status'] == 'active' ? 'Deactivate' : 'Activate' ?>">
+                                        <i class="bi <?= $carer['status'] == 'active' ? 'bi-pause-circle' : 'bi-play-circle' ?>"></i>
+                                    </button>
+                                </form>
+                                <button type="button"
+                                        onclick="confirmDelete(<?= (int)$carer['foster_carer_id'] ?>, '<?= htmlspecialchars($carer['first_name'] . ' ' . $carer['last_name'], ENT_QUOTES) ?>')"
+                                        class="btn btn-sm btn-danger" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
-                <?php endif; ?>
+                <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
@@ -207,12 +204,16 @@ $total_count = $total_stmt->fetchColumn();
                 <p>Are you sure you want to delete foster carer <strong id="deleteCarerName"></strong>?</p>
                 <p class="text-danger"><i class="bi bi-exclamation-triangle"></i> This action cannot be undone.</p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <a href="#" id="deleteConfirmBtn" class="btn btn-danger">
-                    <i class="bi bi-trash"></i> Delete
-                </a>
-            </div>
+            <form method="POST" action="delete.php">
+                <?= csrf_field() ?>
+                <input type="hidden" name="id" id="deleteCarerId">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -224,30 +225,21 @@ $total_count = $total_stmt->fetchColumn();
 
 <script>
     $(document).ready(function() {
-        var hasData = $('#fosterCarersTable tbody tr').length > 0;
-
-        if (hasData) {
-            try {
-                $('#fosterCarersTable').DataTable({
-                    "pageLength": 15,
-                    "order": [[0, 'asc']],
-                    "columnDefs": [
-                        { "targets": [8], "orderable": false, "searchable": false } // Actions column
-                    ],
-                    "language": {
-                        "emptyTable": "No foster carers found"
-                    }
-                });
-            } catch (e) {
-                console.log('DataTable error:', e.message);
-                $('#fosterCarersTable').removeAttr('id');
+        $('#fosterCarersTable').DataTable({
+            "pageLength": 15,
+            "order": [[0, 'asc']],
+            "columnDefs": [
+                { "targets": [8], "orderable": false, "searchable": false }
+            ],
+            "language": {
+                "emptyTable": "No foster carers found"
             }
-        }
+        });
     });
 
     function confirmDelete(id, name) {
         document.getElementById('deleteCarerName').textContent = name;
-        document.getElementById('deleteConfirmBtn').href = 'delete.php?id=' + id;
+        document.getElementById('deleteCarerId').value = id;
         new bootstrap.Modal(document.getElementById('deleteModal')).show();
     }
 </script>

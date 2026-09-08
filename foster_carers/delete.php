@@ -2,9 +2,15 @@
 // foster_carers/delete.php
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
+require_once __DIR__ . '/../includes/csrf.php';
 /** @var PDO $pdo */
 
-$foster_carer_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_verify($_POST['csrf_token'] ?? null)) {
+    header('Location: list.php');
+    exit();
+}
+
+$foster_carer_id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
 
 if ($foster_carer_id <= 0) {
     $_SESSION['error_message'] = 'Invalid foster carer ID.';
@@ -38,7 +44,7 @@ try {
     exit;
 
 } catch (PDOException $e) {
-    if ($e->errorInfo[1] == 1451) {
+    if (($e->errorInfo[1] ?? null) == 1451) {
         $_SESSION['error_message'] = "Cannot delete this foster carer because they have associated animals. Please reassign those first.";
     } else {
         $_SESSION['error_message'] = "Failed to delete foster carer. Please try again.";
@@ -47,4 +53,3 @@ try {
     header('Location: list.php');
     exit;
 }
-?>

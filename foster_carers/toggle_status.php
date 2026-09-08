@@ -2,9 +2,15 @@
 // foster_carers/toggle_status.php
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
+require_once __DIR__ . '/../includes/csrf.php';
 /** @var PDO $pdo */
 
-$foster_carer_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_verify($_POST['csrf_token'] ?? null)) {
+    header('Location: list.php');
+    exit();
+}
+
+$foster_carer_id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
 
 if ($foster_carer_id <= 0) {
     $_SESSION['error_message'] = 'Invalid foster carer ID.';
@@ -42,4 +48,3 @@ try {
     header('Location: list.php');
     exit;
 }
-?>

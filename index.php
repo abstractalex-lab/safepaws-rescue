@@ -45,5 +45,6 @@ if (isset($_SESSION['user_id'])) {
 <p><a href="public/animals.php">Browse animals for adoption</a></p>
 <p><a href="contact/index.php">Contact Us</a></p>
 <p><a href="partner_organisations/list.php">Partner Organisation List</a></p>
+<p><a href="foster_carers/list.php">Foster Carers List</a></p>
 </body>
 </html>
