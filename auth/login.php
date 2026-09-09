@@ -58,24 +58,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SafePaws Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
-<body>
-<h1>Admin Login</h1>
+<body class="bg-light">
 
-<?php if ($error): ?>
-    <p style="color:red;"><?= htmlentities($error) ?></p>
-<?php endif; ?>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="text-center mt-5 mb-4">
+                <h1 class="h3">
+                    <i class="bi bi-heart-fill text-danger"></i> SafePaws Rescue
+                </h1>
+                <p class="text-muted">Staff login</p>
+            </div>
 
-<form method="post" action="login.php">
-    <label for="username">Username</label><br>
-    <input type="text" id="username" name="username" required>
-    <br><br>
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
 
-    <label for="password">Password</label><br>
-    <input type="password" id="password" name="password" required>
-    <br><br>
+                    <?php if ($error): ?>
+                        <div class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle"></i> <?= htmlentities($error) ?>
+                        </div>
+                    <?php endif; ?>
 
-    <button type="submit">Login</button>
-</form>
+                    <form method="post" action="login.php">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username"
+                                   required autofocus>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+
+            <p class="text-center mt-3">
+                <a href="../index.php" class="text-muted">Back to SafePaws Rescue</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
