@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Rotate the session ID on login to prevent session fixation
             session_regenerate_id(true);
             $_SESSION['user_id'] = $user->user_id;
-            header("Location: ../index.php");
+            header("Location: ../dashboard.php");
             exit;
         }
 
