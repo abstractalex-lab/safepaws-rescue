@@ -38,13 +38,14 @@ if (isset($_SESSION['user_id'])) {
 
 <?php if ($current_user): ?>
     <p>Hi, <?= htmlentities($current_user->first_name) ?>! <a href="auth/logout.php">Logout</a></p>
+    <p><a href="partner_organisations/list.php">Partner Organisation List</a></p>
+    <p><a href="foster_carers/list.php">Foster Carers List</a></p>
+    <p><a href="contact/list.php">Contact Messages</a></p>
 <?php else: ?>
     <p><a href="auth/login.php">Admin Login</a></p>
 <?php endif; ?>
 
 <p><a href="public/animals.php">Browse animals for adoption</a></p>
 <p><a href="contact/index.php">Contact Us</a></p>
-<p><a href="partner_organisations/list.php">Partner Organisation List</a></p>
-<p><a href="foster_carers/list.php">Foster Carers List</a></p>
 </body>
 </html>

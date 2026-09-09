@@ -40,6 +40,11 @@ if (isset($_SESSION['user_id'])) {
                         <i class="bi bi-people"></i> Foster Carers
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../contact/list.php">
+                        <i class="bi bi-envelope"></i> Messages
+                    </a>
+                </li>
             </ul>
             <ul class="navbar-nav">
                 <?php if ($current_user): ?>
