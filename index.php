@@ -100,7 +100,7 @@ try {
                         Questions about adopting, fostering, or surrendering an animal?
                         Send us a message and we'll get back to you.
                     </p>
-                    <!-- TODO: Add a contact form in the future, but for now just link to the contact page. -->
+                    <!-- TODO: Add a contact form in the future, since now just a placeholder link to the contact page -->
                     <a href="contact/index.php" class="btn btn-outline-primary">Contact us</a>
                 </div>
             </div>
