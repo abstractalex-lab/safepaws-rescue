@@ -60,7 +60,7 @@ if ($animal['date_of_birth']) {
     }
 }
 
-// Bootstrap badge colour per status
+// Bootstrap badge color per status
 $statusBadges = [
         'in_care'   => 'bg-secondary',
         'available' => 'bg-success',
