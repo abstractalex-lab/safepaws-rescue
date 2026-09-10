@@ -62,36 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="../index.php">
-            <i class="bi bi-heart-fill text-danger"></i> SafePaws Rescue
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="../index.php">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../public/animals.php">Available Animals</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="index.php">Contact Us</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="../auth/login.php">
-                        <i class="bi bi-box-arrow-in-right"></i> Admin Login
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<?php include __DIR__ . '/../includes/navbar.php'; ?>
 
 <div class="container mt-4">
     <div class="row justify-content-center">
