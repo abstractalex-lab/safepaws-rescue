@@ -1,17 +1,34 @@
 <?php
-// partner_organisations/delete.php
+/**
+ * Delete partner organization (admin).
+ *
+ * Action script with no output of its own. Performs the delete and redirects back to the list with a flash message.
+ *
+ * Requires POST with a valid CSRF token, so a stray GET (prefetch, pasted URL, crawler) can't destroy a record.
+ *
+ * @var PDO $pdo
+ */
+
+// Include necessary files
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
-/** @var PDO $pdo */
+require_once __DIR__ . '/../includes/csrf.php';
 
-$organisation_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-
-if ($organisation_id <= 0) {
+// Check for POST request and valid CSRF token
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_verify($_POST['csrf_token'] ?? null)) {
     header('Location: list.php');
     exit();
 }
 
-// check if organisation exists and get name for message
+// Validate and sanitize the organization ID
+$organisation_id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+if ($organisation_id <= 0) {
+    $_SESSION['error_message'] = 'Invalid organisation ID.';
+    header('Location: list.php');
+    exit();
+}
+
+// Fetch the name first, so the confirmation message can identify what was deleted
 try {
     $stmt = $pdo->prepare("SELECT name FROM partner_organisations WHERE organisation_id = :id");
     $stmt->execute([':id' => $organisation_id]);
@@ -29,24 +46,18 @@ try {
     exit();
 }
 
-// perform deletion
+// Delete the organization
 try {
     $stmt = $pdo->prepare("DELETE FROM partner_organisations WHERE organisation_id = :id");
     $stmt->execute([':id' => $organisation_id]);
 
     $_SESSION['success_message'] = "Organisation '{$organisation['name']}' has been deleted successfully!";
     header('Location: list.php');
-    exit;
+    exit();
 
 } catch (PDOException $e) {
-    // check if it's a foreign key constraint error (MySQL error code 1451)
-    if ($e->errorInfo[1] == 1451) {
-        $_SESSION['error_message'] = "Cannot delete this organisation because it has associated records. Please remove those first.";
-    } else {
-        $_SESSION['error_message'] = "Failed to delete organisation. Please try again.";
-        error_log('Database error: ' . $e->getMessage());
-    }
+    error_log('Database error: ' . $e->getMessage());
+    $_SESSION['error_message'] = "Failed to delete organisation. Please try again.";
     header('Location: list.php');
-    exit;
+    exit();
 }
-?>
