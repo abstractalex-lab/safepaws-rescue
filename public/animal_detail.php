@@ -10,7 +10,9 @@
  * @var PDO $pdo
  */
 
+// Include necessary files for database connection and helper functions
 require_once __DIR__ . '/../connection.php';
+require_once __DIR__ . '/../includes/animal_helpers.php';
 
 $animalId = $_GET['id'] ?? '';
 
@@ -19,10 +21,7 @@ if (!ctype_digit((string) $animalId)) {
     exit;
 }
 
-// Explicit column list prevents leaking internal fields out of the result
-// The status filter is part of the WHERE clause rather than a check after
-// the fetch, so a non-available animal is indistinguishable from one that
-// doesn't exist.
+// Explicit column list rather than a.*, prevents leaking internal fields out of the result
 $stmt = $pdo->prepare(
     "SELECT a.animal_id, a.name, a.sex, a.desexed, a.date_of_birth, a.date_admitted,
             a.description, a.profile_image,
@@ -40,17 +39,8 @@ if (!$animal) {
     exit;
 }
 
-$age = null;
-if ($animal['date_of_birth']) {
-    try {
-        $diff = (new DateTime($animal['date_of_birth']))->diff(new DateTime());
-    } catch (Exception $e) {
-        // Handle the exception if needed
-    }
-    $age = $diff->y > 0
-        ? $diff->y . ' year' . ($diff->y === 1 ? '' : 's')
-        : $diff->m . ' month' . ($diff->m === 1 ? '' : 's');
-}
+// Computed from DOB each time the page loads
+$age = animalAge($animal['date_of_birth']);
 ?>
 
 <!DOCTYPE html>
@@ -59,65 +49,132 @@ if ($animal['date_of_birth']) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlentities($animal['name']) ?> - SafePaws Rescue</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body>
-<h1><?= htmlentities($animal['name']) ?></h1>
-<br>
+<?php include __DIR__ . '/../includes/navbar.php'; ?>
 
-<?php if ($animal['profile_image']): ?>
-    <img src="../<?= htmlentities($animal['profile_image']) ?>"
-         alt="<?= htmlentities($animal['name']) ?>" style="max-width:300px;">
-    <br><br>
-<?php endif; ?>
+<div class="container mt-4">
 
-<table border="1" cellpadding="6">
-    <tr>
-        <th>Species</th>
-        <td><?= htmlentities($animal['species_name']) ?></td>
-    </tr>
-    <tr>
-        <th>Breed</th>
-        <td><?= htmlentities($animal['breed_name']) ?></td>
-    </tr>
-    <tr>
-        <th>Sex</th>
-        <td><?= htmlentities(ucfirst($animal['sex'])) ?></td>
-    </tr>
-    <tr>
-        <th>Desexed</th>
-        <td><?= $animal['desexed'] ? 'Yes' : 'No' ?></td>
-    </tr>
-    <tr>
-        <th>Age</th>
-        <td><?= $age ? htmlentities($age) : '<em>Unknown</em>' ?></td>
-    </tr>
-    <tr>
-        <th>In our care since</th>
-        <td><?= htmlentities($animal['date_admitted']) ?></td>
-    </tr>
-</table>
-<br>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="animals.php">Animals for Adoption</a></li>
+            <li class="breadcrumb-item active"><?= htmlentities($animal['name']) ?></li>
+        </ol>
+    </nav>
 
-<?php if ($animal['description']): ?>
-    <h2>About <?= htmlentities($animal['name']) ?></h2>
-    <p><?= nl2br(htmlentities($animal['description'])) ?></p>
-    <br>
-<?php endif; ?>
+    <div class="row g-4">
+        <div class="col-md-5">
+            <div class="card">
+                <?php if ($animal['profile_image']): ?>
+                    <!-- Clicking the image opens it full-size in a modal -->
+                    <img src="../<?= htmlentities($animal['profile_image']) ?>" class="card-img-top"
+                         alt="<?= htmlentities($animal['name']) ?>"
+                         style="height:320px; object-fit:cover; cursor:pointer;"
+                         data-bs-toggle="modal" data-bs-target="#imageModal">
+                <?php else: ?>
+                    <div class="card-body text-center text-muted py-5">
+                        <i class="bi bi-image fs-1"></i>
+                        <p class="mb-0 mt-2">No photo available yet</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
 
-<?php
-/*
- * TODO: link to the adoption application form once that module is built.
- * The form is publicly accessible and takes the animal id, e.g.
- *   <a href="../applications/apply.php?animal_id=<?= $animal['animal_id'] ?>">
- *       Apply to adopt <?= htmlentities($animal['name']) ?>
- *   </a>
- * Ownership of the applications module is still to be assigned.
- */
-?>
-<p><em>Adoption applications coming soon.</em></p>
-<br>
+        <div class="col-md-7">
+            <h2 class="mb-1"><?= htmlentities($animal['name']) ?></h2>
+            <p class="text-muted">
+                <span class="badge bg-success">Available for adoption</span>
+            </p>
 
-<p><a href="animals.php">Back to All Animals</a></p>
+            <table class="table table-sm">
+                <tr>
+                    <th style="width:40%;">Species</th>
+                    <td><?= htmlentities($animal['species_name']) ?></td>
+                </tr>
+                <tr>
+                    <th>Breed</th>
+                    <td><?= htmlentities($animal['breed_name']) ?></td>
+                </tr>
+                <tr>
+                    <th>Sex</th>
+                    <td><?= htmlentities(ucfirst($animal['sex'])) ?></td>
+                </tr>
+                <tr>
+                    <th>Desexed</th>
+                    <td><?= $animal['desexed'] ? 'Yes' : 'No' ?></td>
+                </tr>
+                <tr>
+                    <th>Age</th>
+                    <td>
+                        <?php if ($age): ?>
+                            <?= htmlentities($age) ?>
+                        <?php else: ?>
+                            <span class="text-muted">Unknown</span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th>In our care since</th>
+                    <td><?= htmlentities($animal['date_admitted']) ?></td>
+                </tr>
+            </table>
 
+            <?php
+            /*
+             * TODO: link to the adoption application form once that module is built.
+             * The form is publicly accessible and takes the animal id, e.g.
+             *   <a href="../applications/apply.php?animal_id=<?= $animal['animal_id'] ?>"
+             *      class="btn btn-primary btn-lg">
+             *       Apply to adopt <?= htmlentities($animal['name']) ?>
+             *   </a>
+             */
+            ?>
+            <button class="btn btn-primary btn-lg" disabled>
+                <i class="bi bi-heart"></i> Apply to adopt <?= htmlentities($animal['name']) ?>
+            </button>
+            <p class="text-muted small mt-2">Online applications are coming soon.</p>
+        </div>
+    </div>
+
+    <?php if ($animal['description']): ?>
+        <div class="card mt-4">
+            <div class="card-header">
+                <i class="bi bi-card-text"></i> About <?= htmlentities($animal['name']) ?>
+            </div>
+            <div class="card-body">
+                <?= nl2br(htmlentities($animal['description'])) ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <div class="mt-4 mb-5">
+        <a href="animals.php" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to All Animals
+        </a>
+    </div>
+
+    <?php if ($animal['profile_image']): ?>
+        <!-- Full-size photo, opened from the image above -->
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><?= htmlentities($animal['name']) ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img src="../<?= htmlentities($animal['profile_image']) ?>"
+                             class="img-fluid" alt="<?= htmlentities($animal['name']) ?>">
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

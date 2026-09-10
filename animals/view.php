@@ -50,15 +50,7 @@ $appStmt->execute([$animalId]);
 $applicationCount = (int) $appStmt->fetchColumn();
 
 // Computed from DOB each time the page loads
-$age = null;
-if ($animal['date_of_birth']) {
-    $diff = (new DateTime($animal['date_of_birth']))->diff(new DateTime());
-    if ($diff->y > 0) {
-        $age = $diff->y . ' year' . ($diff->y === 1 ? '' : 's');
-    } else {
-        $age = $diff->m . ' month' . ($diff->m === 1 ? '' : 's');
-    }
-}
+$age = animalAge($animal['date_of_birth']);
 
 // Bootstrap badge color per status
 $statusBadges = [

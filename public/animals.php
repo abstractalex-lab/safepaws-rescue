@@ -10,7 +10,9 @@
  * @var PDO $pdo
  */
 
+// Include necessary files for database connection and helper functions
 require_once __DIR__ . '/../connection.php';
+require_once __DIR__ . '/../includes/animal_helpers.php';
 
 // Explicit column list rather than a.*, prevents leaking internal fields out of the result
 $stmt = $pdo->query(
@@ -23,24 +25,6 @@ $stmt = $pdo->query(
      ORDER BY a.name"
 );
 $animals = $stmt->fetchAll();
-
-/**
- * Rough age from a date of birth, or null when none is recorded.
- */
-function animalAge(?string $dateOfBirth): ?string
-{
-    if (!$dateOfBirth) {
-        return null;
-    }
-
-    $diff = (new DateTime($dateOfBirth))->diff(new DateTime());
-
-    if ($diff->y > 0) {
-        return $diff->y . ' year' . ($diff->y === 1 ? '' : 's');
-    }
-
-    return $diff->m . ' month' . ($diff->m === 1 ? '' : 's');
-}
 ?>
 
 <!DOCTYPE html>
@@ -49,44 +33,91 @@ function animalAge(?string $dateOfBirth): ?string
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animals for Adoption - SafePaws Rescue</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body>
-<h1>Animals Looking for a Home</h1>
-<br>
+<?php include __DIR__ . '/../includes/navbar.php'; ?>
 
-<?php if (count($animals) === 0): ?>
-    <p>There are no animals available for adoption at the moment. Please check back soon.</p>
-<?php else: ?>
-    <?php foreach ($animals as $animal): ?>
-        <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px; max-width:600px;">
-            <?php if ($animal['profile_image']): ?>
-                <img src="../<?= htmlentities($animal['profile_image']) ?>"
-                     alt="<?= htmlentities($animal['name']) ?>" style="max-width:200px;">
-                <br>
-            <?php endif; ?>
+<div class="container mt-4">
 
-            <h2><?= htmlentities($animal['name']) ?></h2>
-            <p>
-                <?= htmlentities($animal['species_name']) ?> &middot;
-                <?= htmlentities($animal['breed_name']) ?> &middot;
-                <?= htmlentities(ucfirst($animal['sex'])) ?>
-                <?php $age = animalAge($animal['date_of_birth']); ?>
-                <?php if ($age): ?>
-                    &middot; <?= htmlentities($age) ?>
-                <?php endif; ?>
-            </p>
+    <div class="mb-4">
+        <h2><i class="bi bi-search-heart"></i> Animals Looking for a Home</h2>
+        <p class="text-muted mb-0">
+            Every animal below is available for adoption right now.
+        </p>
+    </div>
 
-            <?php if ($animal['description']): ?>
-                <p><?= nl2br(htmlentities($animal['description'])) ?></p>
-            <?php endif; ?>
-
-            <p><a href="animal_detail.php?id=<?= $animal['animal_id'] ?>">Find out more</a></p>
+    <?php if (isset($_GET['notfound'])): ?>
+        <!-- Set when animal_detail.php is asked for an animal that isn't available -->
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle"></i>
+            That animal isn't available for adoption at the moment. Here's who is.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    <?php endforeach; ?>
-<?php endif; ?>
+    <?php endif; ?>
 
-<br>
-<p><a href="../index.php">Back to Home</a></p>
+    <?php if (count($animals) === 0): ?>
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-house-heart fs-1"></i>
+            <p class="mt-3 mb-0">
+                There are no animals available for adoption at the moment.
+                Please check back soon.
+            </p>
+        </div>
+    <?php else: ?>
+        <div class="row g-4">
+            <?php foreach ($animals as $animal): ?>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <?php if ($animal['profile_image']): ?>
+                            <img src="../<?= htmlentities($animal['profile_image']) ?>"
+                                 class="card-img-top" alt="<?= htmlentities($animal['name']) ?>"
+                                 style="height:220px; object-fit:cover;">
+                        <?php else: ?>
+                            <div class="card-img-top d-flex align-items-center justify-content-center
+                                        bg-light text-muted" style="height:220px;">
+                                <i class="bi bi-image fs-1"></i>
+                            </div>
+                        <?php endif; ?>
 
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title mb-1"><?= htmlentities($animal['name']) ?></h5>
+
+                            <p class="text-muted small mb-2">
+                                <?= htmlentities($animal['species_name']) ?> &middot;
+                                <?= htmlentities($animal['breed_name']) ?> &middot;
+                                <?= htmlentities(ucfirst($animal['sex'])) ?>
+                                <?php $age = animalAge($animal['date_of_birth']); ?>
+                                <?php if ($age): ?>
+                                    &middot; <?= htmlentities($age) ?>
+                                <?php endif; ?>
+                            </p>
+
+                            <?php if ($animal['description']): ?>
+                                <p class="card-text small"><?= nl2br(htmlentities($animal['description'])) ?></p>
+                            <?php endif; ?>
+
+                            <!-- mt-auto keeps the button on the bottom edge whatever the description length -->
+                            <a href="animal_detail.php?id=<?= $animal['animal_id'] ?>"
+                               class="btn btn-outline-primary mt-auto align-self-start">
+                                Find out more
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="mt-4 mb-5">
+        <a href="../index.php" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Home
+        </a>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
