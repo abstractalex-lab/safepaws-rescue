@@ -60,15 +60,15 @@ try {
                 <div class="col-md-4">
                     <div class="card h-100">
                         <?php if ($animal['profile_image']): ?>
-                            <img src="<?= htmlentities($animal['profile_image']) ?>"
-                                 class="card-img-top" alt="<?= htmlentities($animal['name']) ?>"
+                            <img src="<?= htmlspecialchars($animal['profile_image']) ?>"
+                                 class="card-img-top" alt="<?= htmlspecialchars($animal['name']) ?>"
                                  style="height:200px; object-fit:cover;">
                         <?php endif; ?>
                         <div class="card-body">
-                            <h5 class="card-title"><?= htmlentities($animal['name']) ?></h5>
+                            <h5 class="card-title"><?= htmlspecialchars($animal['name']) ?></h5>
                             <p class="card-text text-muted">
-                                <?= htmlentities($animal['species_name']) ?> &middot;
-                                <?= htmlentities($animal['breed_name']) ?>
+                                <?= htmlspecialchars($animal['species_name']) ?> &middot;
+                                <?= htmlspecialchars($animal['breed_name']) ?>
                             </p>
                             <a href="public/animal_detail.php?id=<?= $animal['animal_id'] ?>"
                                class="btn btn-sm btn-outline-primary">Find out more</a>

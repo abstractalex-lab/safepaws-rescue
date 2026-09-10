@@ -236,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.php">Animals</a></li>
                     <li class="breadcrumb-item">
-                        <a href="view.php?id=<?= $animal['animal_id'] ?>"><?= htmlentities($animal['name']) ?></a>
+                        <a href="view.php?id=<?= $animal['animal_id'] ?>"><?= htmlspecialchars($animal['name']) ?></a>
                     </li>
                     <li class="breadcrumb-item active">Edit</li>
                 </ol>
@@ -247,14 +247,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <p class="mb-2"><i class="bi bi-exclamation-triangle"></i> Please fix the following:</p>
                     <ul class="mb-0">
                         <?php foreach ($errors as $error): ?>
-                            <li><?= htmlentities($error) ?></li>
+                            <li><?= htmlspecialchars($error) ?></li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
             <?php endif; ?>
 
             <form method="post" action="edit.php" enctype="multipart/form-data">
-                <input type="hidden" name="animal_id" value="<?= htmlentities($animalId) ?>">
+                <input type="hidden" name="animal_id" value="<?= htmlspecialchars($animalId) ?>">
 
                 <div class="card mb-3">
                     <div class="card-header"><i class="bi bi-clipboard-heart"></i> Animal Details</div>
@@ -264,7 +264,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="col-md-6">
                                 <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name"
-                                       value="<?= htmlentities($old['name'] ?? '') ?>" required>
+                                       value="<?= htmlspecialchars($old['name'] ?? '') ?>" required>
                             </div>
 
                             <div class="col-md-3">
@@ -289,7 +289,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label for="species" class="form-label">Species <span class="text-danger">*</span></label>
                                 <select class="form-select" id="species" onchange="updateBreeds()">
                                     <?php foreach ($species as $s): ?>
-                                        <option value="<?= $s['species_id'] ?>"><?= htmlentities($s['species_name']) ?></option>
+                                        <option value="<?= $s['species_id'] ?>"><?= htmlspecialchars($s['species_name']) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -303,7 +303,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label for="date_of_birth" class="form-label">Date of Birth</label>
                                 <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
                                        max="<?= date('Y-m-d') ?>"
-                                       value="<?= htmlentities($old['date_of_birth'] ?? '') ?>">
+                                       value="<?= htmlspecialchars($old['date_of_birth'] ?? '') ?>">
                                 <div class="form-text">Leave blank if unknown.</div>
                             </div>
 
@@ -311,7 +311,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label for="date_admitted" class="form-label">Date Admitted <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control" id="date_admitted" name="date_admitted"
                                        max="<?= date('Y-m-d') ?>"
-                                       value="<?= htmlentities($old['date_admitted'] ?? '') ?>" required>
+                                       value="<?= htmlspecialchars($old['date_admitted'] ?? '') ?>" required>
                             </div>
 
                         </div>
@@ -323,7 +323,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3"><?= htmlentities($old['description'] ?? '') ?></textarea>
+                            <textarea class="form-control" id="description" name="description" rows="3"><?= htmlspecialchars($old['description'] ?? '') ?></textarea>
                             <div class="form-text">Shown publicly on the adoption listing.</div>
                         </div>
 
@@ -332,7 +332,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 Medical Notes
                                 <span class="badge bg-secondary">Internal only</span>
                             </label>
-                            <textarea class="form-control" id="medical_notes" name="medical_notes" rows="3"><?= htmlentities($old['medical_notes'] ?? '') ?></textarea>
+                            <textarea class="form-control" id="medical_notes" name="medical_notes" rows="3"><?= htmlspecialchars($old['medical_notes'] ?? '') ?></textarea>
                             <div class="form-text">Never shown on the public pages.</div>
                         </div>
                     </div>
@@ -347,7 +347,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <select class="form-select" id="status" name="status" required>
                                     <?php foreach ($statusLabels as $value => $label): ?>
                                         <option value="<?= $value ?>" <?= ($old['status'] ?? '') === $value ? 'selected' : '' ?>>
-                                            <?= htmlentities($label) ?>
+                                            <?= htmlspecialchars($label) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -367,7 +367,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <option value="<?= $fc['foster_carer_id'] ?>"
                                                 <?= $isSelected ? 'selected' : '' ?>
                                                 <?= $isInactive ? 'disabled' : '' ?>>
-                                            <?= htmlentities($fc['first_name'] . ' ' . $fc['last_name']) ?><?= $isInactive ? ' (inactive)' : '' ?>
+                                            <?= htmlspecialchars($fc['first_name'] . ' ' . $fc['last_name']) ?><?= $isInactive ? ' (inactive)' : '' ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -383,8 +383,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <?php if ($animal['profile_image']): ?>
-                                    <img src="../<?= htmlentities($animal['profile_image']) ?>"
-                                         class="img-fluid rounded" alt="<?= htmlentities($animal['name']) ?>">
+                                    <img src="../<?= htmlspecialchars($animal['profile_image']) ?>"
+                                         class="img-fluid rounded" alt="<?= htmlspecialchars($animal['name']) ?>">
                                 <?php else: ?>
                                     <div class="text-center text-muted border rounded py-4">
                                         <i class="bi bi-image fs-1"></i>

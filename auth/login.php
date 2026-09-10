@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <?php if ($error): ?>
                         <div class="alert alert-danger" role="alert">
-                            <i class="bi bi-exclamation-triangle"></i> <?= htmlentities($error) ?>
+                            <i class="bi bi-exclamation-triangle"></i> <?= htmlspecialchars($error) ?>
                         </div>
                     <?php endif; ?>
 

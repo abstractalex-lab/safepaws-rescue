@@ -66,7 +66,7 @@ $statusBadges = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlentities($animal['name']) ?> - SafePaws Admin</title>
+    <title><?= htmlspecialchars($animal['name']) ?> - SafePaws Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
@@ -78,15 +78,15 @@ $statusBadges = [
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="index.php">Animals</a></li>
-            <li class="breadcrumb-item active"><?= htmlentities($animal['name']) ?></li>
+            <li class="breadcrumb-item active"><?= htmlspecialchars($animal['name']) ?></li>
         </ol>
     </nav>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">
-            <?= htmlentities($animal['name']) ?>
+            <?= htmlspecialchars($animal['name']) ?>
             <span class="badge <?= $statusBadges[$animal['status']] ?? 'bg-light text-dark' ?> align-middle">
-                <?= htmlentities($statusLabels[$animal['status']] ?? $animal['status']) ?>
+                <?= htmlspecialchars($statusLabels[$animal['status']] ?? $animal['status']) ?>
             </span>
         </h2>
         <div class="btn-group">
@@ -105,8 +105,8 @@ $statusBadges = [
             <div class="card">
                 <?php if ($animal['profile_image']): ?>
                     <!-- Clicking the thumbnail opens the full-size image in a modal -->
-                    <img src="../<?= htmlentities($animal['profile_image']) ?>" class="card-img-top"
-                         alt="<?= htmlentities($animal['name']) ?>"
+                    <img src="../<?= htmlspecialchars($animal['profile_image']) ?>" class="card-img-top"
+                         alt="<?= htmlspecialchars($animal['name']) ?>"
                          style="height:280px; object-fit:cover; cursor:pointer;"
                          data-bs-toggle="modal" data-bs-target="#imageModal">
                 <?php else: ?>
@@ -122,16 +122,16 @@ $statusBadges = [
                 <div class="card-body">
                     <?php if ($animal['foster_first_name']): ?>
                         <p class="mb-1">
-                            <strong><?= htmlentities($animal['foster_first_name'] . ' ' . $animal['foster_last_name']) ?></strong>
+                            <strong><?= htmlspecialchars($animal['foster_first_name'] . ' ' . $animal['foster_last_name']) ?></strong>
                             <?php if ($animal['foster_status'] !== 'active'): ?>
                                 <span class="badge bg-secondary">Inactive</span>
                             <?php endif; ?>
                         </p>
                         <p class="mb-1 small text-muted">
-                            <i class="bi bi-envelope"></i> <?= htmlentities($animal['foster_email']) ?>
+                            <i class="bi bi-envelope"></i> <?= htmlspecialchars($animal['foster_email']) ?>
                         </p>
                         <p class="mb-0 small text-muted">
-                            <i class="bi bi-telephone"></i> <?= htmlentities($animal['foster_phone']) ?>
+                            <i class="bi bi-telephone"></i> <?= htmlspecialchars($animal['foster_phone']) ?>
                         </p>
                     <?php else: ?>
                         <p class="text-muted mb-0">Not fostered</p>
@@ -148,15 +148,15 @@ $statusBadges = [
                     <table class="table table-sm mb-0">
                         <tr>
                             <th style="width:35%;">Species</th>
-                            <td><?= htmlentities($animal['species_name']) ?></td>
+                            <td><?= htmlspecialchars($animal['species_name']) ?></td>
                         </tr>
                         <tr>
                             <th>Breed</th>
-                            <td><?= htmlentities($animal['breed_name']) ?></td>
+                            <td><?= htmlspecialchars($animal['breed_name']) ?></td>
                         </tr>
                         <tr>
                             <th>Sex</th>
-                            <td><?= htmlentities(ucfirst($animal['sex'])) ?></td>
+                            <td><?= htmlspecialchars(ucfirst($animal['sex'])) ?></td>
                         </tr>
                         <tr>
                             <th>Desexed</th>
@@ -172,8 +172,8 @@ $statusBadges = [
                             <th>Date of Birth</th>
                             <td>
                                 <?php if ($animal['date_of_birth']): ?>
-                                    <?= htmlentities($animal['date_of_birth']) ?>
-                                    <span class="text-muted">(<?= htmlentities($age) ?>)</span>
+                                    <?= htmlspecialchars($animal['date_of_birth']) ?>
+                                    <span class="text-muted">(<?= htmlspecialchars($age) ?>)</span>
                                 <?php else: ?>
                                     <span class="text-muted">Unknown</span>
                                 <?php endif; ?>
@@ -181,7 +181,7 @@ $statusBadges = [
                         </tr>
                         <tr>
                             <th>Date Admitted</th>
-                            <td><?= htmlentities($animal['date_admitted']) ?></td>
+                            <td><?= htmlspecialchars($animal['date_admitted']) ?></td>
                         </tr>
                         <tr>
                             <th>Adoption Applications</th>
@@ -195,7 +195,7 @@ $statusBadges = [
                 <div class="card-header"><i class="bi bi-card-text"></i> Description</div>
                 <div class="card-body">
                     <?php if ($animal['description']): ?>
-                        <?= nl2br(htmlentities($animal['description'])) ?>
+                        <?= nl2br(htmlspecialchars($animal['description'])) ?>
                     <?php else: ?>
                         <span class="text-muted">None recorded</span>
                     <?php endif; ?>
@@ -210,7 +210,7 @@ $statusBadges = [
                 </div>
                 <div class="card-body">
                     <?php if ($animal['medical_notes']): ?>
-                        <?= nl2br(htmlentities($animal['medical_notes'])) ?>
+                        <?= nl2br(htmlspecialchars($animal['medical_notes'])) ?>
                     <?php else: ?>
                         <span class="text-muted">None recorded</span>
                     <?php endif; ?>
@@ -231,12 +231,12 @@ $statusBadges = [
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title"><?= htmlentities($animal['name']) ?></h5>
+                        <h5 class="modal-title"><?= htmlspecialchars($animal['name']) ?></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center">
-                        <img src="../<?= htmlentities($animal['profile_image']) ?>"
-                             class="img-fluid" alt="<?= htmlentities($animal['name']) ?>">
+                        <img src="../<?= htmlspecialchars($animal['profile_image']) ?>"
+                             class="img-fluid" alt="<?= htmlspecialchars($animal['name']) ?>">
                     </div>
                 </div>
             </div>

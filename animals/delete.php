@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <?php if ($error): ?>
                 <div class="alert alert-danger" role="alert">
-                    <i class="bi bi-exclamation-octagon"></i> <?= htmlentities($error) ?>
+                    <i class="bi bi-exclamation-octagon"></i> <?= htmlspecialchars($error) ?>
                 </div>
             <?php endif; ?>
 
@@ -123,31 +123,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="row g-3 align-items-center">
                         <?php if ($animal['profile_image']): ?>
                             <div class="col-4">
-                                <img src="../<?= htmlentities($animal['profile_image']) ?>"
-                                     class="img-fluid rounded" alt="<?= htmlentities($animal['name']) ?>">
+                                <img src="../<?= htmlspecialchars($animal['profile_image']) ?>"
+                                     class="img-fluid rounded" alt="<?= htmlspecialchars($animal['name']) ?>">
                             </div>
                         <?php endif; ?>
                         <div class="<?= $animal['profile_image'] ? 'col-8' : 'col-12' ?>">
                             <table class="table table-sm mb-0">
                                 <tr>
                                     <th style="width:40%;">Name</th>
-                                    <td><?= htmlentities($animal['name']) ?></td>
+                                    <td><?= htmlspecialchars($animal['name']) ?></td>
                                 </tr>
                                 <tr>
                                     <th>Species</th>
-                                    <td><?= htmlentities($animal['species_name']) ?></td>
+                                    <td><?= htmlspecialchars($animal['species_name']) ?></td>
                                 </tr>
                                 <tr>
                                     <th>Breed</th>
-                                    <td><?= htmlentities($animal['breed_name']) ?></td>
+                                    <td><?= htmlspecialchars($animal['breed_name']) ?></td>
                                 </tr>
                                 <tr>
                                     <th>Status</th>
-                                    <td><?= htmlentities($statusLabels[$animal['status']] ?? $animal['status']) ?></td>
+                                    <td><?= htmlspecialchars($statusLabels[$animal['status']] ?? $animal['status']) ?></td>
                                 </tr>
                                 <tr>
                                     <th>Date Admitted</th>
-                                    <td><?= htmlentities($animal['date_admitted']) ?></td>
+                                    <td><?= htmlspecialchars($animal['date_admitted']) ?></td>
                                 </tr>
                             </table>
                         </div>
@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </a>
                     <?php if ($applicationCount === 0): ?>
                         <form method="post" action="delete.php" class="d-inline">
-                            <input type="hidden" name="animal_id" value="<?= htmlentities($animalId) ?>">
+                            <input type="hidden" name="animal_id" value="<?= htmlspecialchars($animalId) ?>">
                             <button type="submit" class="btn btn-danger">
                                 <i class="bi bi-trash"></i> Yes, delete this animal
                             </button>

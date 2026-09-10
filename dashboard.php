@@ -62,12 +62,12 @@ try {
 <div class="container mt-4">
     <h2 class="mb-1"><i class="bi bi-speedometer2"></i> Dashboard</h2>
     <p class="text-muted mb-4">
-        Welcome back, <?= htmlentities($current_user->first_name ?? 'Admin') ?>.
+        Welcome back, <?= htmlspecialchars($current_user->first_name ?? 'Admin') ?>.
     </p>
 
     <?php if ($loadError): ?>
         <div class="alert alert-warning" role="alert">
-            <i class="bi bi-exclamation-triangle"></i> <?= htmlentities($loadError) ?>
+            <i class="bi bi-exclamation-triangle"></i> <?= htmlspecialchars($loadError) ?>
         </div>
     <?php endif; ?>
 

@@ -71,8 +71,8 @@ $animals = $stmt->fetchAll();
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100">
                         <?php if ($animal['profile_image']): ?>
-                            <img src="../<?= htmlentities($animal['profile_image']) ?>"
-                                 class="card-img-top" alt="<?= htmlentities($animal['name']) ?>"
+                            <img src="../<?= htmlspecialchars($animal['profile_image']) ?>"
+                                 class="card-img-top" alt="<?= htmlspecialchars($animal['name']) ?>"
                                  style="height:220px; object-fit:cover;">
                         <?php else: ?>
                             <div class="card-img-top d-flex align-items-center justify-content-center
@@ -82,20 +82,20 @@ $animals = $stmt->fetchAll();
                         <?php endif; ?>
 
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title mb-1"><?= htmlentities($animal['name']) ?></h5>
+                            <h5 class="card-title mb-1"><?= htmlspecialchars($animal['name']) ?></h5>
 
                             <p class="text-muted small mb-2">
-                                <?= htmlentities($animal['species_name']) ?> &middot;
-                                <?= htmlentities($animal['breed_name']) ?> &middot;
-                                <?= htmlentities(ucfirst($animal['sex'])) ?>
+                                <?= htmlspecialchars($animal['species_name']) ?> &middot;
+                                <?= htmlspecialchars($animal['breed_name']) ?> &middot;
+                                <?= htmlspecialchars(ucfirst($animal['sex'])) ?>
                                 <?php $age = animalAge($animal['date_of_birth']); ?>
                                 <?php if ($age): ?>
-                                    &middot; <?= htmlentities($age) ?>
+                                    &middot; <?= htmlspecialchars($age) ?>
                                 <?php endif; ?>
                             </p>
 
                             <?php if ($animal['description']): ?>
-                                <p class="card-text small"><?= nl2br(htmlentities($animal['description'])) ?></p>
+                                <p class="card-text small"><?= nl2br(htmlspecialchars($animal['description'])) ?></p>
                             <?php endif; ?>
 
                             <!-- mt-auto keeps the button on the bottom edge whatever the description length -->

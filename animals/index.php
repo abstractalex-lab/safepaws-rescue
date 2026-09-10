@@ -126,18 +126,18 @@ $statusBadges = [
                     <tbody>
                     <?php foreach ($animals as $animal): ?>
                         <tr>
-                            <td><?= htmlentities($animal['name']) ?></td>
-                            <td><?= htmlentities($animal['species_name']) ?></td>
-                            <td><?= htmlentities($animal['breed_name']) ?></td>
-                            <td><?= htmlentities(ucfirst($animal['sex'])) ?></td>
+                            <td><?= htmlspecialchars($animal['name']) ?></td>
+                            <td><?= htmlspecialchars($animal['species_name']) ?></td>
+                            <td><?= htmlspecialchars($animal['breed_name']) ?></td>
+                            <td><?= htmlspecialchars(ucfirst($animal['sex'])) ?></td>
                             <td>
                                 <span class="badge <?= $statusBadges[$animal['status']] ?? 'bg-light text-dark' ?>">
-                                    <?= htmlentities($statusLabels[$animal['status']] ?? $animal['status']) ?>
+                                    <?= htmlspecialchars($statusLabels[$animal['status']] ?? $animal['status']) ?>
                                 </span>
                             </td>
                             <td>
                                 <?php if ($animal['foster_first_name']): ?>
-                                    <?= htmlentities($animal['foster_first_name'] . ' ' . $animal['foster_last_name']) ?>
+                                    <?= htmlspecialchars($animal['foster_first_name'] . ' ' . $animal['foster_last_name']) ?>
                                 <?php else: ?>
                                     <span class="text-muted">Not fostered</span>
                                 <?php endif; ?>

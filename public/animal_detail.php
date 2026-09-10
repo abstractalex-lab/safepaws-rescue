@@ -48,7 +48,7 @@ $age = animalAge($animal['date_of_birth']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlentities($animal['name']) ?> - SafePaws Rescue</title>
+    <title><?= htmlspecialchars($animal['name']) ?> - SafePaws Rescue</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
@@ -60,7 +60,7 @@ $age = animalAge($animal['date_of_birth']);
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="animals.php">Animals for Adoption</a></li>
-            <li class="breadcrumb-item active"><?= htmlentities($animal['name']) ?></li>
+            <li class="breadcrumb-item active"><?= htmlspecialchars($animal['name']) ?></li>
         </ol>
     </nav>
 
@@ -69,8 +69,8 @@ $age = animalAge($animal['date_of_birth']);
             <div class="card">
                 <?php if ($animal['profile_image']): ?>
                     <!-- Clicking the image opens it full-size in a modal -->
-                    <img src="../<?= htmlentities($animal['profile_image']) ?>" class="card-img-top"
-                         alt="<?= htmlentities($animal['name']) ?>"
+                    <img src="../<?= htmlspecialchars($animal['profile_image']) ?>" class="card-img-top"
+                         alt="<?= htmlspecialchars($animal['name']) ?>"
                          style="height:320px; object-fit:cover; cursor:pointer;"
                          data-bs-toggle="modal" data-bs-target="#imageModal">
                 <?php else: ?>
@@ -83,7 +83,7 @@ $age = animalAge($animal['date_of_birth']);
         </div>
 
         <div class="col-md-7">
-            <h2 class="mb-1"><?= htmlentities($animal['name']) ?></h2>
+            <h2 class="mb-1"><?= htmlspecialchars($animal['name']) ?></h2>
             <p class="text-muted">
                 <span class="badge bg-success">Available for adoption</span>
             </p>
@@ -91,15 +91,15 @@ $age = animalAge($animal['date_of_birth']);
             <table class="table table-sm">
                 <tr>
                     <th style="width:40%;">Species</th>
-                    <td><?= htmlentities($animal['species_name']) ?></td>
+                    <td><?= htmlspecialchars($animal['species_name']) ?></td>
                 </tr>
                 <tr>
                     <th>Breed</th>
-                    <td><?= htmlentities($animal['breed_name']) ?></td>
+                    <td><?= htmlspecialchars($animal['breed_name']) ?></td>
                 </tr>
                 <tr>
                     <th>Sex</th>
-                    <td><?= htmlentities(ucfirst($animal['sex'])) ?></td>
+                    <td><?= htmlspecialchars(ucfirst($animal['sex'])) ?></td>
                 </tr>
                 <tr>
                     <th>Desexed</th>
@@ -109,7 +109,7 @@ $age = animalAge($animal['date_of_birth']);
                     <th>Age</th>
                     <td>
                         <?php if ($age): ?>
-                            <?= htmlentities($age) ?>
+                            <?= htmlspecialchars($age) ?>
                         <?php else: ?>
                             <span class="text-muted">Unknown</span>
                         <?php endif; ?>
@@ -117,7 +117,7 @@ $age = animalAge($animal['date_of_birth']);
                 </tr>
                 <tr>
                     <th>In our care since</th>
-                    <td><?= htmlentities($animal['date_admitted']) ?></td>
+                    <td><?= htmlspecialchars($animal['date_admitted']) ?></td>
                 </tr>
             </table>
 
@@ -127,12 +127,12 @@ $age = animalAge($animal['date_of_birth']);
              * The form is publicly accessible and takes the animal id, e.g.
              *   <a href="../applications/apply.php?animal_id=<?= $animal['animal_id'] ?>"
              *      class="btn btn-primary btn-lg">
-             *       Apply to adopt <?= htmlentities($animal['name']) ?>
+             *       Apply to adopt <?= htmlspecialchars($animal['name']) ?>
              *   </a>
              */
             ?>
             <button class="btn btn-primary btn-lg" disabled>
-                <i class="bi bi-heart"></i> Apply to adopt <?= htmlentities($animal['name']) ?>
+                <i class="bi bi-heart"></i> Apply to adopt <?= htmlspecialchars($animal['name']) ?>
             </button>
             <p class="text-muted small mt-2">Online applications are coming soon.</p>
         </div>
@@ -141,10 +141,10 @@ $age = animalAge($animal['date_of_birth']);
     <?php if ($animal['description']): ?>
         <div class="card mt-4">
             <div class="card-header">
-                <i class="bi bi-card-text"></i> About <?= htmlentities($animal['name']) ?>
+                <i class="bi bi-card-text"></i> About <?= htmlspecialchars($animal['name']) ?>
             </div>
             <div class="card-body">
-                <?= nl2br(htmlentities($animal['description'])) ?>
+                <?= nl2br(htmlspecialchars($animal['description'])) ?>
             </div>
         </div>
     <?php endif; ?>
@@ -161,12 +161,12 @@ $age = animalAge($animal['date_of_birth']);
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title"><?= htmlentities($animal['name']) ?></h5>
+                        <h5 class="modal-title"><?= htmlspecialchars($animal['name']) ?></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-center">
-                        <img src="../<?= htmlentities($animal['profile_image']) ?>"
-                             class="img-fluid" alt="<?= htmlentities($animal['name']) ?>">
+                        <img src="../<?= htmlspecialchars($animal['profile_image']) ?>"
+                             class="img-fluid" alt="<?= htmlspecialchars($animal['name']) ?>">
                     </div>
                 </div>
             </div>

@@ -95,7 +95,7 @@ if (!isset($current_user)) {
                     <li class="nav-item d-flex align-items-center">
                         <span class="navbar-text me-3 d-flex align-items-center gap-1">
                             <i class="bi bi-person-circle"></i>
-                            <?= htmlentities($current_user->first_name ?? 'Admin') ?>
+                            <?= htmlspecialchars($current_user->first_name ?? 'Admin') ?>
                         </span>
                     </li>
                     <li class="nav-item">
