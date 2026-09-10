@@ -146,7 +146,7 @@ try {
 
                     <?php if ($carer['status'] == 'active' && $available_capacity > 0): ?>
                         <div class="mt-3">
-                            <a href="../animals/list.php?foster_carer=<?= $carer['foster_carer_id'] ?>"
+                            <a href="../animals/index.php?foster_carer=<?= $carer['foster_carer_id'] ?>"
                                class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-plus-circle"></i> Assign Animal
                             </a>

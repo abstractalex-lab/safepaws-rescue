@@ -2,9 +2,8 @@
 /**
  * Cascading dropdown data block for the animal add/edit forms.
  *
- * Rendered inline (rather than living in animal-form.js) because the
- * values come from the database and the current request. The logic that
- * consumes them is in js/animal-form.js.
+ * Rendered inline (rather than living in animal-form.js) because the values come from the database
+ * and the current request. The logic that consumes them is in js/animal-form.js.
  *
  * @var array $species
  * @var array $breeds

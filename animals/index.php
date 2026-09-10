@@ -3,7 +3,6 @@
  * Animal list (admin).
  *
  * Displays all animals with their species, breed, and foster carer (where assigned).
- * Unfiltered for now - search/filter to be added as a follow-up pass once this base query/display is confirmed working.
  *
  * @var PDO $pdo
  * @var array $statusLabels
