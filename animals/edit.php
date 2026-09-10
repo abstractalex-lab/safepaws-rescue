@@ -222,124 +222,218 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Animal - SafePaws Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body>
-<h1>Edit Animal</h1>
-<br>
+<?php include __DIR__ . '/../includes/navbar.php'; ?>
 
-<?php if (!empty($errors)): ?>
-    <ul style="color:red;">
-        <?php foreach ($errors as $error): ?>
-            <li><?= htmlentities($error) ?></li>
-        <?php endforeach; ?>
-    </ul>
-<?php endif; ?>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
 
-<form method="post" action="edit.php" enctype="multipart/form-data">
-    <input type="hidden" name="animal_id" value="<?= htmlentities($animalId) ?>">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.php">Animals</a></li>
+                    <li class="breadcrumb-item">
+                        <a href="view.php?id=<?= $animal['animal_id'] ?>"><?= htmlentities($animal['name']) ?></a>
+                    </li>
+                    <li class="breadcrumb-item active">Edit</li>
+                </ol>
+            </nav>
 
-    <label for="name">Name</label><br>
-    <input type="text" id="name" name="name" value="<?= htmlentities($old['name'] ?? '') ?>" required>
-    <br><br>
+            <?php if (!empty($errors)): ?>
+                <div class="alert alert-danger" role="alert">
+                    <p class="mb-2"><i class="bi bi-exclamation-triangle"></i> Please fix the following:</p>
+                    <ul class="mb-0">
+                        <?php foreach ($errors as $error): ?>
+                            <li><?= htmlentities($error) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
 
-    <label for="species">Species</label><br>
-    <select id="species" onchange="updateBreeds()">
-        <?php foreach ($species as $s): ?>
-            <option value="<?= $s['species_id'] ?>"><?= htmlentities($s['species_name']) ?></option>
-        <?php endforeach; ?>
-    </select>
-    <br><br>
+            <form method="post" action="edit.php" enctype="multipart/form-data">
+                <input type="hidden" name="animal_id" value="<?= htmlentities($animalId) ?>">
 
-    <label for="breed_id">Breed</label><br>
-    <select id="breed_id" name="breed_id" required></select>
-    <br><br>
+                <div class="card mb-3">
+                    <div class="card-header"><i class="bi bi-clipboard-heart"></i> Animal Details</div>
+                    <div class="card-body">
+                        <div class="row g-3">
 
-    <label for="sex">Sex</label><br>
-    <select id="sex" name="sex" required>
-        <option value="male" <?= ($old['sex'] ?? '') === 'male' ? 'selected' : '' ?>>Male</option>
-        <option value="female" <?= ($old['sex'] ?? '') === 'female' ? 'selected' : '' ?>>Female</option>
-        <option value="unknown" <?= ($old['sex'] ?? '') === 'unknown' ? 'selected' : '' ?>>Unknown</option>
-    </select>
-    <br><br>
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name"
+                                       value="<?= htmlentities($old['name'] ?? '') ?>" required>
+                            </div>
 
-    <label for="desexed">
-        <input type="checkbox" id="desexed" name="desexed" <?= !empty($old['desexed']) ? 'checked' : '' ?>>
-        Desexed
-    </label>
-    <br><br>
+                            <div class="col-md-3">
+                                <label for="sex" class="form-label">Sex <span class="text-danger">*</span></label>
+                                <select class="form-select" id="sex" name="sex" required>
+                                    <option value="male" <?= ($old['sex'] ?? '') === 'male' ? 'selected' : '' ?>>Male</option>
+                                    <option value="female" <?= ($old['sex'] ?? '') === 'female' ? 'selected' : '' ?>>Female</option>
+                                    <option value="unknown" <?= ($old['sex'] ?? '') === 'unknown' ? 'selected' : '' ?>>Unknown</option>
+                                </select>
+                            </div>
 
-    <label for="date_of_birth">Date of Birth (leave blank if unknown)</label><br>
-    <input type="date" id="date_of_birth" name="date_of_birth"
-           max="<?= date('Y-m-d') ?>"
-           value="<?= htmlentities($old['date_of_birth'] ?? '') ?>">
-    <br><br>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="desexed" name="desexed"
+                                            <?= !empty($old['desexed']) ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="desexed">Desexed</label>
+                                </div>
+                            </div>
 
-    <label for="date_admitted">Date Admitted</label><br>
-    <input type="date" id="date_admitted" name="date_admitted"
-           max="<?= date('Y-m-d') ?>"
-           value="<?= htmlentities($old['date_admitted'] ?? '') ?>" required>
-    <br><br>
+                            <!-- Species drives the breed dropdown via js/animal-form.js -->
+                            <div class="col-md-6">
+                                <label for="species" class="form-label">Species <span class="text-danger">*</span></label>
+                                <select class="form-select" id="species" onchange="updateBreeds()">
+                                    <?php foreach ($species as $s): ?>
+                                        <option value="<?= $s['species_id'] ?>"><?= htmlentities($s['species_name']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
 
-    <label for="description">Description</label><br>
-    <textarea id="description" name="description" rows="3" cols="50"><?= htmlentities($old['description'] ?? '') ?></textarea>
-    <br><br>
+                            <div class="col-md-6">
+                                <label for="breed_id" class="form-label">Breed <span class="text-danger">*</span></label>
+                                <select class="form-select" id="breed_id" name="breed_id" required></select>
+                            </div>
 
-    <label for="medical_notes">Medical Notes</label><br>
-    <textarea id="medical_notes" name="medical_notes" rows="3" cols="50"><?= htmlentities($old['medical_notes'] ?? '') ?></textarea>
-    <br><br>
+                            <div class="col-md-6">
+                                <label for="date_of_birth" class="form-label">Date of Birth</label>
+                                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
+                                       max="<?= date('Y-m-d') ?>"
+                                       value="<?= htmlentities($old['date_of_birth'] ?? '') ?>">
+                                <div class="form-text">Leave blank if unknown.</div>
+                            </div>
 
-    <label for="status">Status</label><br>
-    <select id="status" name="status" required>
-        <?php foreach ($statusLabels as $value => $label): ?>
-            <option value="<?= $value ?>" <?= ($old['status'] ?? '') === $value ? 'selected' : '' ?>>
-                <?= htmlentities($label) ?>
-            </option>
-        <?php endforeach; ?>
-    </select>
-    <br><br>
+                            <div class="col-md-6">
+                                <label for="date_admitted" class="form-label">Date Admitted <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="date_admitted" name="date_admitted"
+                                       max="<?= date('Y-m-d') ?>"
+                                       value="<?= htmlentities($old['date_admitted'] ?? '') ?>" required>
+                            </div>
 
-    <label for="foster_carer_id">Foster Carer (optional)</label><br>
-    <select id="foster_carer_id" name="foster_carer_id">
-        <option value="">-- Not assigned --</option>
-        <?php foreach ($fosterCarers as $fc): ?>
-            <?php
-            // An inactive carer only appears here if they were assigned to this animal
-            // Greyed out so it can't be re-picked once changed, but still can submit if remains selected
-            $isInactive = $fc['status'] !== 'active';
-            $isSelected = ($old['foster_carer_id'] ?? '') == $fc['foster_carer_id'];
-            ?>
-            <option value="<?= $fc['foster_carer_id'] ?>"
-                <?= $isSelected ? 'selected' : '' ?>
-                <?= $isInactive ? 'disabled' : '' ?>>
-                <?= htmlentities($fc['first_name'] . ' ' . $fc['last_name']) ?><?= $isInactive ? ' (inactive)' : '' ?>
-            </option>
-        <?php endforeach; ?>
-    </select>
-    <br><br>
+                        </div>
+                    </div>
+                </div>
 
-    <label>Current Profile Image</label><br>
-    <?php if ($animal['profile_image']): ?>
-        <img src="../<?= htmlentities($animal['profile_image']) ?>" alt="<?= htmlentities($animal['name']) ?>" style="max-width:200px;">
-        <br>
-        <label for="remove_image">
-            <input type="checkbox" id="remove_image" name="remove_image">
-            Remove current image
-        </label>
-    <?php else: ?>
-        <em>No image uploaded.</em>
-    <?php endif; ?>
-    <br><br>
+                <div class="card mb-3">
+                    <div class="card-header"><i class="bi bi-card-text"></i> Notes</div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"><?= htmlentities($old['description'] ?? '') ?></textarea>
+                            <div class="form-text">Shown publicly on the adoption listing.</div>
+                        </div>
 
-    <label for="profile_image">Replace Profile Image (optional)</label><br>
-    <input type="file" id="profile_image" name="profile_image" accept=".jpg,.jpeg,.png,.gif">
-    <br><br>
+                        <div class="mb-0">
+                            <label for="medical_notes" class="form-label">
+                                Medical Notes
+                                <span class="badge bg-secondary">Internal only</span>
+                            </label>
+                            <textarea class="form-control" id="medical_notes" name="medical_notes" rows="3"><?= htmlentities($old['medical_notes'] ?? '') ?></textarea>
+                            <div class="form-text">Never shown on the public pages.</div>
+                        </div>
+                    </div>
+                </div>
 
-    <button type="submit">Save Changes</button>
-</form>
+                <div class="card mb-3">
+                    <div class="card-header"><i class="bi bi-house-heart"></i> Status and Placement</div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <?php foreach ($statusLabels as $value => $label): ?>
+                                        <option value="<?= $value ?>" <?= ($old['status'] ?? '') === $value ? 'selected' : '' ?>>
+                                            <?= htmlentities($label) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
 
-<br>
-<p><a href="index.php">Back to Animal List</a></p>
+                            <div class="col-md-6">
+                                <label for="foster_carer_id" class="form-label">Foster Carer</label>
+                                <select class="form-select" id="foster_carer_id" name="foster_carer_id">
+                                    <option value="">-- Not assigned --</option>
+                                    <?php foreach ($fosterCarers as $fc): ?>
+                                        <?php
+                                        // An inactive carer only appears here if they were assigned to this animal
+                                        // Greyed out so it can't be re-picked once changed, but still can submit if remains selected
+                                        $isInactive = $fc['status'] !== 'active';
+                                        $isSelected = ($old['foster_carer_id'] ?? '') == $fc['foster_carer_id'];
+                                        ?>
+                                        <option value="<?= $fc['foster_carer_id'] ?>"
+                                                <?= $isSelected ? 'selected' : '' ?>
+                                                <?= $isInactive ? 'disabled' : '' ?>>
+                                            <?= htmlentities($fc['first_name'] . ' ' . $fc['last_name']) ?><?= $isInactive ? ' (inactive)' : '' ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <div class="form-text">Only active carers can take a new placement.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="card mb-3">
+                    <div class="card-header"><i class="bi bi-image"></i> Profile Image</div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <?php if ($animal['profile_image']): ?>
+                                    <img src="../<?= htmlentities($animal['profile_image']) ?>"
+                                         class="img-fluid rounded" alt="<?= htmlentities($animal['name']) ?>">
+                                <?php else: ?>
+                                    <div class="text-center text-muted border rounded py-4">
+                                        <i class="bi bi-image fs-1"></i>
+                                        <p class="mb-0 mt-2 small">No image uploaded</p>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="col-md-8">
+                                <label for="profile_image" class="form-label">
+                                    <?= $animal['profile_image'] ? 'Replace image' : 'Upload an image' ?>
+                                </label>
+                                <input type="file" class="form-control" id="profile_image" name="profile_image"
+                                       accept=".jpg,.jpeg,.png,.gif">
+                                <div class="form-text">Optional. JPG, PNG or GIF, up to 5MB.</div>
+
+                                <?php if ($animal['profile_image']): ?>
+                                    <!-- Uploading a replacement takes precedence over this checkbox -->
+                                    <div class="form-check mt-3">
+                                        <input class="form-check-input" type="checkbox" id="remove_image" name="remove_image">
+                                        <label class="form-check-label" for="remove_image">
+                                            Remove current image
+                                        </label>
+                                        <div class="form-text">
+                                            The existing file is deleted from the server once the change is saved.
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mb-5">
+                    <a href="view.php?id=<?= $animal['animal_id'] ?>" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Save Changes
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <?php require __DIR__ . '/_form_scripts.php'; ?>
 </body>
 </html>
