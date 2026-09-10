@@ -120,21 +120,9 @@ $age = animalAge($animal['date_of_birth']);
                     <td><?= htmlspecialchars($animal['date_admitted']) ?></td>
                 </tr>
             </table>
-
-            <?php
-            /*
-             * TODO: link to the adoption application form once that module is built.
-             * The form is publicly accessible and takes the animal id, e.g.
-             *   <a href="../applications/apply.php?animal_id=<?= $animal['animal_id'] ?>"
-             *      class="btn btn-primary btn-lg">
-             *       Apply to adopt <?= htmlspecialchars($animal['name']) ?>
-             *   </a>
-             */
-            ?>
-            <button class="btn btn-primary btn-lg" disabled>
+            <a href="apply.php?animal_id=<?= $animal['animal_id'] ?>" class="btn btn-primary btn-lg">
                 <i class="bi bi-heart"></i> Apply to adopt <?= htmlspecialchars($animal['name']) ?>
-            </button>
-            <p class="text-muted small mt-2">Online applications are coming soon.</p>
+            </a>
         </div>
     </div>
 

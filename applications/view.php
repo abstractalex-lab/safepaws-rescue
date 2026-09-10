@@ -2,13 +2,12 @@
 /**
  * Adoption application detail (admin).
  *
- * Shows the full application alongside the animal it relates to, and lets
- * Emma change its status.
+ * Shows the full application alongside the animal it relates to, and let staffs change its status.
  *
- * Approving an application also moves the animal to "Adoption pending",
- * so the two writes are wrapped in a transaction - an approved application
- * pointing at an animal still marked available would be a broken state.
- * Emma can still set the animal to "Adopted" later from its edit page.
+ * Approving an application also moves the animal to "Adoption pending", so the two writes are wrapped in
+ * a transaction - an approved application pointing at an animal still marked available would be a broken state.
+ *
+ * Staff can still set the animal to "Adopted" later from its edit page.
  *
  * @var PDO $pdo
  * @var array $statusLabels

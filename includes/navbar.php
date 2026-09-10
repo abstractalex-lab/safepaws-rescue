@@ -73,6 +73,11 @@ if (!isset($current_user)) {
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="<?= $base ?>/applications/index.php">
+                            <i class="bi bi-file-earmark-text"></i> Applications
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="<?= $base ?>/foster_carers/list.php">
                             <i class="bi bi-people"></i> Foster Carers
                         </a>
