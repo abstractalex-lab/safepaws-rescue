@@ -21,7 +21,7 @@ require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
 require_once __DIR__ . '/../includes/animal_helpers.php';
 
-// Get the animal ID from either GET or POST, and validate it as a positive integer
+// Get the animal ID from either GET or POST, and validate it as a digit string
 $animalId = $_GET['id'] ?? $_POST['animal_id'] ?? '';
 if (!ctype_digit((string) $animalId)) {
     header("Location: index.php?error=invalid");
@@ -30,7 +30,7 @@ if (!ctype_digit((string) $animalId)) {
 
 // Fetch the animal's details, including species and breed names, for display on the confirmation page
 $stmt = $pdo->prepare(
-    "SELECT a.*, s.species_name, b.breed_name
+        "SELECT a.*, s.species_name, b.breed_name
      FROM animals a
      JOIN breeds b ON a.breed_id = b.breed_id
      JOIN species s ON b.species_id = s.species_id
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Catch that and show a user-friendly message instead of a raw SQL error
         if ($e->getCode() === '23000') {
             $error = "This animal cannot be deleted because it has adoption applications on record. "
-                . "Remove those applications first if the animal really needs to be deleted.";
+                    . "Remove those applications first if the animal really needs to be deleted.";
         } else {
             $error = "Something went wrong while deleting this animal. Please try again.";
         }
@@ -86,64 +86,100 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delete Animal - SafePaws Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body>
-<h1>Delete Animal</h1>
-<br>
+<?php include __DIR__ . '/../includes/navbar.php'; ?>
 
-<?php if ($error): ?>
-    <p style="color:red;"><?= htmlentities($error) ?></p>
-    <br>
-<?php endif; ?>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
 
-<p>Are you sure you want to delete this animal? This cannot be undone.</p>
-<br>
+            <?php if ($error): ?>
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-octagon"></i> <?= htmlspecialchars($error) ?>
+                </div>
+            <?php endif; ?>
 
-<table border="1" cellpadding="6">
-    <tr>
-        <th>Name</th>
-        <td><?= htmlentities($animal['name']) ?></td>
-    </tr>
-    <tr>
-        <th>Species</th>
-        <td><?= htmlentities($animal['species_name']) ?></td>
-    </tr>
-    <tr>
-        <th>Breed</th>
-        <td><?= htmlentities($animal['breed_name']) ?></td>
-    </tr>
-    <tr>
-        <th>Status</th>
-        <td><?= htmlentities($statusLabels[$animal['status']] ?? $animal['status']) ?></td>
-    </tr>
-    <tr>
-        <th>Date Admitted</th>
-        <td><?= htmlentities($animal['date_admitted']) ?></td>
-    </tr>
-</table>
-<br>
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <i class="bi bi-exclamation-triangle"></i> Delete Animal
+                </div>
+                <div class="card-body">
 
-<?php if ($animal['profile_image']): ?>
-    <p>The profile image below will also be permanently deleted.</p>
-    <img src="../<?= htmlentities($animal['profile_image']) ?>" alt="<?= htmlentities($animal['name']) ?>" style="max-width:200px;">
-    <br><br>
-<?php endif; ?>
+                    <?php if ($applicationCount > 0): ?>
+                        <!-- Blocked by the RESTRICT foreign key, so no delete button is offered -->
+                        <div class="alert alert-warning mb-3" role="alert">
+                            <i class="bi bi-shield-exclamation"></i>
+                            This animal has <?= $applicationCount ?> adoption
+                            application<?= $applicationCount === 1 ? '' : 's' ?>
+                            on record and cannot be deleted while those exist.
+                        </div>
+                    <?php else: ?>
+                        <p>Are you sure you want to delete this animal? This cannot be undone.</p>
+                    <?php endif; ?>
 
-<?php if ($applicationCount > 0): ?>
-    <p style="color:red;">
-        This animal has <?= $applicationCount ?> adoption application<?= $applicationCount === 1 ? '' : 's' ?>
-        on record and cannot be deleted while those exist.
-    </p>
-    <br>
-    <p><a href="index.php">Back to Animal List</a></p>
-<?php else: ?>
-    <form method="post" action="delete.php">
-        <input type="hidden" name="animal_id" value="<?= htmlentities($animalId) ?>">
-        <button type="submit">Yes, delete this animal</button>
-    </form>
-    <br>
-    <p><a href="index.php">Cancel and go back</a></p>
-<?php endif; ?>
+                    <div class="row g-3 align-items-center">
+                        <?php if ($animal['profile_image']): ?>
+                            <div class="col-4">
+                                <img src="../<?= htmlspecialchars($animal['profile_image']) ?>"
+                                     class="img-fluid rounded" alt="<?= htmlspecialchars($animal['name']) ?>">
+                            </div>
+                        <?php endif; ?>
+                        <div class="<?= $animal['profile_image'] ? 'col-8' : 'col-12' ?>">
+                            <table class="table table-sm mb-0">
+                                <tr>
+                                    <th style="width:40%;">Name</th>
+                                    <td><?= htmlspecialchars($animal['name']) ?></td>
+                                </tr>
+                                <tr>
+                                    <th>Species</th>
+                                    <td><?= htmlspecialchars($animal['species_name']) ?></td>
+                                </tr>
+                                <tr>
+                                    <th>Breed</th>
+                                    <td><?= htmlspecialchars($animal['breed_name']) ?></td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td><?= htmlspecialchars($statusLabels[$animal['status']] ?? $animal['status']) ?></td>
+                                </tr>
+                                <tr>
+                                    <th>Date Admitted</th>
+                                    <td><?= htmlspecialchars($animal['date_admitted']) ?></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
 
+                    <?php if ($animal['profile_image'] && $applicationCount === 0): ?>
+                        <p class="text-muted small mt-3 mb-0">
+                            <i class="bi bi-info-circle"></i>
+                            The profile image shown above will also be permanently deleted.
+                        </p>
+                    <?php endif; ?>
+
+                </div>
+                <div class="card-footer d-flex justify-content-end gap-2">
+                    <a href="index.php" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Cancel and go back
+                    </a>
+                    <?php if ($applicationCount === 0): ?>
+                        <form method="post" action="delete.php" class="d-inline">
+                            <input type="hidden" name="animal_id" value="<?= htmlspecialchars($animalId) ?>">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Yes, delete this animal
+                            </button>
+                        </form>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
