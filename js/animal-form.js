@@ -7,6 +7,7 @@
  *   - oldSpeciesId: the species_id matching oldBreedId (or null)
  */
 
+// Update the breed dropdown when the species selection changes
 function updateBreeds() {
     const speciesSelect = document.getElementById('species');
     const breedSelect = document.getElementById('breed_id');
@@ -25,7 +26,7 @@ function updateBreeds() {
 }
 
 // On initial load, restore the previously selected species (if any)
-// before populating breeds, so a failed submission re-shows correctly.
+// before populating breeds, so a failed submission re-shows correctly
 if (typeof oldSpeciesId !== 'undefined' && oldSpeciesId) {
     document.getElementById('species').value = oldSpeciesId;
 }

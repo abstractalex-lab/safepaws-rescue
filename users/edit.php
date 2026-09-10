@@ -63,8 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $change_password = !empty($form_data['password']);
         if ($change_password) {
-            if (strlen($form_data['password']) < 8) {
-                $errors['password'] = 'Password must be at least 8 characters';
+            if (!preg_match('/^(?=.*\d)(?=.*[\W_]).{8,}$/', $form_data['password'])) {
+                $errors['password'] = 'Password must be at least 8 characters and include a number and a special character';
             }
             if ($form_data['password'] !== $form_data['confirm_password']) {
                 $errors['confirm_password'] = 'Passwords do not match';
@@ -207,7 +207,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <label for="password" class="form-label">New Password</label>
                             <input type="password" class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>"
                                    id="password" name="password" minlength="8" maxlength="72">
-                            <div class="form-text">8-72 characters. Leave blank to keep current password.</div>
+                            <div class="form-text">
+                                Minimum 8 characters, including a number and a special character.
+                                Leave blank to keep current password.
+                            </div>
                             <?php if (isset($errors['password'])): ?>
                                 <div class="invalid-feedback"><?= htmlspecialchars($errors['password'], ENT_QUOTES) ?></div>
                             <?php endif; ?>
