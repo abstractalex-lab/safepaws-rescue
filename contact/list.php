@@ -9,7 +9,7 @@ $success_message = $_SESSION['success_message'] ?? null;
 $error_message = $_SESSION['error_message'] ?? null;
 unset($_SESSION['success_message'], $_SESSION['error_message']);
 
-$status_filter = isset($_GET['filter']) ? $_GET['filter'] : '';
+$status_filter = $_GET['filter'] ?? '';
 
 $sql = "SELECT * FROM contact_messages";
 $params = [];

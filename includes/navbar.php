@@ -59,9 +59,11 @@ if (!isset($current_user)) {
                         <i class="bi bi-search-heart"></i> Adopt
                     </a>
                 </li>
+
+                <!-- Admins go to the enquiry list; visitors go to the public form -->
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= $base ?>/contact/index.php">
-                        <i class="bi bi-envelope"></i> Contact Us
+                    <a class="nav-link" href="<?= $base ?>/contact/<?= $current_user ? 'list.php' : 'index.php' ?>">
+                        <i class="bi bi-envelope"></i> <?= $current_user ? 'Enquiries' : 'Contact Us' ?>
                     </a>
                 </li>
 
