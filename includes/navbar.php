@@ -97,16 +97,31 @@ if (!isset($current_user)) {
 
             <ul class="navbar-nav">
                 <?php if ($current_user): ?>
-                    <li class="nav-item d-flex align-items-center">
-                        <span class="navbar-text me-3 d-flex align-items-center gap-1">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1"
+                           href="#" id="userMenu" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle"></i>
                             <?= htmlspecialchars($current_user->first_name ?? 'Admin') ?>
-                        </span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-outline-danger btn-sm" href="<?= $base ?>/auth/logout.php">
-                            <i class="bi bi-box-arrow-right"></i> Logout
                         </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                            <li>
+                                <a class="dropdown-item" href="<?= $base ?>/dashboard.php">
+                                    <i class="bi bi-speedometer2"></i> Dashboard
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="<?= $base ?>/users/account.php">
+                                    <i class="bi bi-person-gear"></i> My Details
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="<?= $base ?>/auth/logout.php">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 <?php else: ?>
                     <li class="nav-item">
