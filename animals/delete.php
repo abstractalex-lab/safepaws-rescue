@@ -5,11 +5,9 @@
  * GET shows a confirmation page with the animal's details, after that run delete via POST,
  * prevents a stray GET (prefetch, pasted URL, crawler) can't destroy a record.
  *
- * adoption_applications.animal_id is ON DELETE RESTRICT, so deleting an
- * animal that has applications on record will fail at the database level.
- * That's deliberate - application history shouldn't disappear with the
- * animal - so the constraint violation is caught and reported in plain
- * language rather than surfacing as a raw SQL error.
+ * adoption_applications.animal_id is ON DELETE RESTRICT, so deleting an animal that has applications on record will
+ * fail at the database level. Application history shouldn't disappear with the animal, so the constraint violation
+ * is caught and reported in plain language rather than surfacing as a raw SQL error.
  *
  * @var PDO $pdo
  * @var array $statusLabels

@@ -10,7 +10,7 @@ $error_message = $_SESSION['error_message'] ?? null;
 unset($_SESSION['success_message'], $_SESSION['error_message']);
 
 $search = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
-$status_filter = isset($_GET['status']) ? $_GET['status'] : '';
+$status_filter = $_GET['status'] ?? '';
 
 $sql = "SELECT * FROM foster_carers WHERE 
         (first_name LIKE :search OR last_name LIKE :search OR email LIKE :search)";

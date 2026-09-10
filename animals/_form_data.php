@@ -2,15 +2,14 @@
 /**
  * Shared dropdown data for the animal add/edit forms.
  *
- * Requires $pdo to already be available, and optionally
- * $currentFosterCarerId - set it before including this file to keep an
- * already-assigned but now-inactive carer in the list (edit.php does
- * this; add.php leaves it unset, so only active carers appear).
+ * Requires $pdo to already be available, and optionally $currentFosterCarerId.
+ * Set $currentFosterCarerId to the ID of the current foster carer before including this file to keep an
+ * already-assigned but now-inactive carer in the list (edit.php does this).
  *
  * Defines: $species, $breeds, $fosterCarers
+ *
+ * @var PDO $pdo
  */
-
-/** @var PDO $pdo */
 
 // All species + all breeds (grouped by species in JS) for the cascading dropdown. Unknown/Mixed are always listed last
 $species = $pdo->query(
