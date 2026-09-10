@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label for="phone" class="form-label">Phone Number</label>
                                 <input type="tel" class="form-control" id="phone" name="phone"
                                        value="<?= htmlspecialchars($form_data['phone'] ?? '', ENT_QUOTES) ?>" maxlength="50">
-                                <div class="form-text">Optional - but helpful if we need to call you.</div>
+                                <div class="form-text">*Optional</div>
                             </div>
 
                             <div class="mb-3">
