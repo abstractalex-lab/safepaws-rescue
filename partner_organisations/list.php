@@ -145,6 +145,10 @@ $types = $type_stmt->fetchAll();
                         <td><?= htmlspecialchars($org['phone'] ?? 'N/A', ENT_QUOTES) ?></td>
                         <td>
                             <div class="btn-group" role="group">
+                                <a href="view.php?id=<?= $org['organisation_id'] ?>"
+                                   class="btn btn-sm btn-info" title="View">
+                                    <i class="bi bi-eye"></i>
+                                </a>
                                 <a href="edit.php?id=<?= $org['organisation_id'] ?>"
                                    class="btn btn-sm btn-warning" title="Edit">
                                     <i class="bi bi-pencil"></i>
