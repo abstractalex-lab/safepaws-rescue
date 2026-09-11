@@ -1,9 +1,20 @@
 <?php
-// contact/list.php - Admin management page (login required)
+/**
+ * Contact enquiries list (admin).
+ *
+ * Shows every enquiry with a replied/unreplied filter, and the full
+ * message text in a per-row modal rather than crowding the table.
+ *
+ * Marking replied and deleting are both POST forms with a CSRF token,
+ * so neither can be triggered by a stray GET request.
+ *
+ * @var PDO $pdo
+ */
+
+// Require authentication and database connection
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
 require_once __DIR__ . '/../includes/csrf.php';
-/** @var PDO $pdo */
 
 $success_message = $_SESSION['success_message'] ?? null;
 $error_message = $_SESSION['error_message'] ?? null;

@@ -1,9 +1,21 @@
 <?php
-// users/list.php
+/**
+ * System users list (admin).
+ *
+ * Server-side search across name and username plus a status filter, with
+ * DataTables layered on top for client-side sorting and paging.
+ *
+ * The signed-in user's own row shows no toggle or delete action, so an
+ * admin can't deactivate or remove the account they're using. Password
+ * hashes are never rendered.
+ *
+ * @var PDO $pdo
+ */
+
+// Include necessary files
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
 require_once __DIR__ . '/../includes/csrf.php';
-/** @var PDO $pdo */
 
 $success_message = $_SESSION['success_message'] ?? null;
 $error_message = $_SESSION['error_message'] ?? null;

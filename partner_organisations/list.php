@@ -1,5 +1,18 @@
 <?php
-// partner_organisations/list.php
+/**
+ * Partner organisations list (admin).
+ *
+ * Server-side search on name plus a type filter, with DataTables layered
+ * on top for client-side sorting and paging. The type dropdown is built
+ * from the distinct values already in the table rather than a fixed list.
+ *
+ * Delete is a POST form with a CSRF token, so it can't be triggered by a
+ * stray GET request.
+ *
+ * @var PDO $pdo
+ */
+
+// include authentication and database connection
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
 require_once __DIR__ . '/../includes/csrf.php';
@@ -10,7 +23,7 @@ $error_message = $_SESSION['error_message'] ?? null;
 unset($_SESSION['success_message'], $_SESSION['error_message']);
 
 $search = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
-$type_filter = isset($_GET['type']) ? $_GET['type'] : '';
+$type_filter = $_GET['type'] ?? '';
 
 $sql = "SELECT * FROM partner_organisations WHERE name LIKE :search";
 $params = [':search' => $search];

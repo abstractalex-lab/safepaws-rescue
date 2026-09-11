@@ -23,10 +23,12 @@ require_once __DIR__ . '/../connection.php';
 // Absolute site-root path, independent of how deep the including page sits
 // Normalize to forward slashes first - on Windows, DOCUMENT_ROOT and __DIR__
 // often use different slash directions, which breaks a literal str_replace.
-$documentRoot = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']);
-$currentDir   = str_replace('\\', '/', __DIR__);
+$docRoot  = str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT']));
+$appRoot  = str_replace('\\', '/', realpath(dirname(__DIR__)));
+$basePath = rtrim(str_replace($docRoot, '', $appRoot), '/');
+$basePath = $basePath === '' ? '' : '/' . ltrim($basePath, '/');
 
-$loginUrl = '/' . trim(str_replace($documentRoot, '', $currentDir), '/') . '/login.php';
+$loginUrl = $basePath . '/auth/login.php';
 
 $authenticated = false;
 

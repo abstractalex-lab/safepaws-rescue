@@ -1,8 +1,17 @@
 <?php
-// partner_organisations/edit.php
+/**
+ * Edit partner organisation (admin).
+ *
+ * Mirrors add.php. The record is loaded first and used to populate the
+ * form; after a failed submit the posted values are shown instead so
+ * edits aren't lost.
+ *
+ * @var PDO $pdo
+ */
+
+// include authentication and database connection
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
-/** @var PDO $pdo */
 
 $organisation_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 

@@ -1,11 +1,21 @@
 <?php
-// foster_carers/edit.php
+/**
+ * Edit foster carer (admin).
+ *
+ * Mirrors add.php, sharing the same input collection and validation
+ * helpers. The record is loaded first and used to populate the form;
+ * after a failed submit the posted values are shown instead so edits
+ * aren't lost.
+ *
+ * @var PDO $pdo
+ */
+
+// Include necessary files
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/foster_carer_constants.php';
 require_once __DIR__ . '/../includes/foster_carer_validation.php';
-/** @var PDO $pdo */
 
 $foster_carer_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 

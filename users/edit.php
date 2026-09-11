@@ -1,9 +1,21 @@
 <?php
-// users/edit.php
+/**
+ * Edit system user (admin).
+ *
+ * Password fields left blank keep the existing password - the update
+ * omits the column entirely in that case, so editing a name can't reset
+ * someone's credentials. A supplied password is re-hashed before storage.
+ *
+ * The existing hash is never loaded or rendered; only the columns needed
+ * to populate the form are selected.
+ *
+ * @var PDO $pdo
+ */
+
+// Include necessary files
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
 require_once __DIR__ . '/../includes/csrf.php';
-/** @var PDO $pdo */
 
 $user_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 

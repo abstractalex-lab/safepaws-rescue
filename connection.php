@@ -10,8 +10,14 @@ if (!file_exists($configPath)) {
     // Missing local config shouldn't leak a raw fatal error to anyone
     // running the app (marker, teammate on first clone, etc.)
     die(
-        "Database configuration file not found. " .
-        "Copy config.local.example.php to config.local.php and fill in your local credentials."
+        '<div style="font-family:sans-serif;max-width:600px;margin:60px auto;padding:20px;'
+        . 'border:1px solid #ccc;border-radius:6px;">'
+        . '<h2>Setup required</h2>'
+        . '<p>The database configuration file was not found.</p>'
+        . '<p>Copy <code>config.local.example.php</code> to <code>config.local.php</code> '
+        . 'and fill in your local MySQL credentials. The database name is <code>fit2104_a3</code>.</p>'
+        . '<p>See <code>README.md</code> for full setup instructions.</p>'
+        . '</div>'
     );
 }
 

@@ -1,9 +1,20 @@
 <?php
-// users/delete.php
+/**
+ * Delete system user (admin).
+ *
+ * Action script with no output of its own. Performs the delete and
+ * redirects back to the list with a flash message.
+ *
+ * Requires POST with a valid CSRF token, and refuses to delete the
+ * account currently signed in.
+ *
+ * @var PDO $pdo
+ */
+
+// Include necessary files
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
 require_once __DIR__ . '/../includes/csrf.php';
-/** @var PDO $pdo */
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_verify($_POST['csrf_token'] ?? null)) {
     header('Location: list.php');

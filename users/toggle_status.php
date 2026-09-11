@@ -1,5 +1,18 @@
 <?php
-// users/toggle_status.php
+/**
+ * Toggle system user active status (admin).
+ *
+ * Action script with no output of its own. Flips the user between active
+ * and inactive, then redirects back to the list with a flash message.
+ *
+ * Requires POST with a valid CSRF token, and refuses to change the
+ * account currently signed in - authentication.php re-checks status on
+ * every request, so self-deactivating would lock the user out mid-session.
+ *
+ * @var PDO $pdo
+ */
+
+// Include necessary files
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
 require_once __DIR__ . '/../includes/csrf.php';
