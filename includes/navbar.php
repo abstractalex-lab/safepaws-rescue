@@ -15,9 +15,10 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Site-root-relative base path, e.g. "/Lab02_Group06".
-$navDocRoot = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']);
-$navAppRoot = str_replace('\\', '/', dirname(__DIR__));
-$base = '/' . trim(str_replace($navDocRoot, '', $navAppRoot), '/');
+$navDocRoot = str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT']));
+$navAppRoot = str_replace('\\', '/', realpath(dirname(__DIR__)));
+$base = rtrim(str_replace($navDocRoot, '', $navAppRoot), '/');
+$base = $base === '' ? '' : '/' . ltrim($base, '/');
 
 // Determine the current logged-in user, if any, to be used to show/hide admin links in the navbar
 if (!isset($current_user)) {

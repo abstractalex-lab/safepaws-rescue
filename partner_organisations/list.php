@@ -10,7 +10,7 @@ $error_message = $_SESSION['error_message'] ?? null;
 unset($_SESSION['success_message'], $_SESSION['error_message']);
 
 $search = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
-$type_filter = isset($_GET['type']) ? $_GET['type'] : '';
+$type_filter = $_GET['type'] ?? '';
 
 $sql = "SELECT * FROM partner_organisations WHERE name LIKE :search";
 $params = [':search' => $search];
