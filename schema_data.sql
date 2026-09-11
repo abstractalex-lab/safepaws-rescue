@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 11, 2026 at 05:46 PM
+-- Generation Time: Sep 11, 2026 at 06:32 PM
 -- Server version: 11.8.6-MariaDB
 -- PHP Version: 8.4.16
 
@@ -95,7 +95,7 @@ INSERT INTO `animals` (`animal_id`, `name`, `breed_id`, `sex`, `desexed`, `date_
 (2, 'Luna', 2, 'female', 1, '2022-07-01', '2026-08-13', 'Small, timid Chihuahua - needs a quiet home.', 'Mild heart murmur, monitored by vet.', 'available', 'animal_profiles/animal_6aa220a119cc5.jpg', NULL),
 (3, 'Coco', 3, 'female', 0, NULL, '2026-08-28', 'Playful Poodle mix, still a puppy at heart.', NULL, 'in_care', 'animal_profiles/animal_6aa21f76969b8.jpg', 1),
 (4, 'Max', 4, 'male', 1, '2019-11-20', '2026-06-09', 'Senior mixed-breed dog, calm and well-behaved.', 'Mild arthritis in hind legs.', 'adopted', 'animal_profiles/animal_6aa220d58acc2.jpg', NULL),
-(5, 'Milo', 5, 'male', 1, '2023-02-05', '2026-08-23', 'Curious Domestic Shorthair kitten.', NULL, 'available', 'animal_profiles/animal_6aa3b10a4b5a5.png', 5),
+(5, 'Milo', 5, 'male', 1, '2023-02-05', '2026-08-23', 'Curious Domestic Shorthair kitten.', NULL, 'available', 'animal_profiles/animal_6aa3bc9a6a2e6.jpg', 5),
 (6, 'Bella', 6, 'female', 1, '2020-05-18', '2026-07-09', 'Elegant Ragdoll, enjoys quiet laps and sunbeams.', NULL, 'pending', 'animal_profiles/animal_6aa2160c01baf.jpg', 9),
 (7, 'Whiskers', 7, 'male', 0, NULL, '2026-09-02', 'Recently admitted stray cat, still settling in.', 'Being treated for mild ear mites.', 'in_care', 'animal_profiles/animal_6aa2223fdd04a.jpg', NULL),
 (8, 'Thumper', 8, 'male', 1, '2022-09-09', '2026-08-05', 'Holland Lop rabbit, litter-trained and social.', NULL, 'available', 'animal_profiles/animal_6aa2221ca1076.jpg', 10),
