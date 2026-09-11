@@ -16,7 +16,7 @@ require_once __DIR__ . '/../includes/csrf.php';
 
 // Check for POST request and valid CSRF token
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_verify($_POST['csrf_token'] ?? null)) {
-    header('Location: list.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_verify($_POST['csrf_token'] ?
 $organisation_id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
 if ($organisation_id <= 0) {
     $_SESSION['error_message'] = 'Invalid organisation ID.';
-    header('Location: list.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -36,13 +36,13 @@ try {
 
     if (!$organisation) {
         $_SESSION['error_message'] = 'Organisation not found.';
-        header('Location: list.php');
+        header('Location: index.php');
         exit();
     }
 } catch (PDOException $e) {
     error_log('Database error: ' . $e->getMessage());
     $_SESSION['error_message'] = 'Failed to load organisation details.';
-    header('Location: list.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -52,12 +52,12 @@ try {
     $stmt->execute([':id' => $organisation_id]);
 
     $_SESSION['success_message'] = "Organisation '{$organisation['name']}' has been deleted successfully!";
-    header('Location: list.php');
+    header('Location: index.php');
     exit();
 
 } catch (PDOException $e) {
     error_log('Database error: ' . $e->getMessage());
     $_SESSION['error_message'] = "Failed to delete organisation. Please try again.";
-    header('Location: list.php');
+    header('Location: index.php');
     exit();
 }

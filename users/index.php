@@ -126,7 +126,7 @@ $active_count = $active_stmt->fetchColumn();
                     <button type="submit" class="btn btn-secondary">
                         <i class="bi bi-search"></i> Search
                     </button>
-                    <a href="list.php" class="btn btn-outline-secondary">
+                    <a href="index.php" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-counterclockwise"></i> Clear
                     </a>
                 </div>

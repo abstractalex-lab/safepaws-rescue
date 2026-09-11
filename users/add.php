@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
 
                 $_SESSION['success_message'] = "User '{$form_data['username']}' has been added successfully!";
-                header('Location: list.php');
+                header('Location: index.php');
                 exit;
 
             } catch (PDOException $e) {
@@ -199,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="list.php" class="btn btn-secondary">
+                            <a href="index.php" class="btn btn-secondary">
                                 <i class="bi bi-arrow-left"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">

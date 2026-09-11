@@ -20,7 +20,7 @@ require_once __DIR__ . '/../includes/csrf.php';
 
 // Check for POST request and valid CSRF token
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_verify($_POST['csrf_token'] ?? null)) {
-    header('Location: list.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_verify($_POST['csrf_token'] ?
 $foster_carer_id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
 if ($foster_carer_id <= 0) {
     $_SESSION['error_message'] = 'Invalid foster carer ID.';
-    header('Location: list.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -40,7 +40,7 @@ try {
 
     if (!$carer) {
         $_SESSION['error_message'] = 'Foster carer not found.';
-        header('Location: list.php');
+        header('Location: index.php');
         exit();
     }
 
@@ -52,7 +52,7 @@ try {
 } catch (PDOException $e) {
     error_log('Database error: ' . $e->getMessage());
     $_SESSION['error_message'] = 'Failed to load foster carer details.';
-    header('Location: list.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -70,12 +70,12 @@ try {
     }
 
     $_SESSION['success_message'] = $message;
-    header('Location: list.php');
+    header('Location: index.php');
     exit;
 
 } catch (PDOException $e) {
     error_log('Database error: ' . $e->getMessage());
     $_SESSION['error_message'] = "Failed to delete foster carer. Please try again.";
-    header('Location: list.php');
+    header('Location: index.php');
     exit;
 }

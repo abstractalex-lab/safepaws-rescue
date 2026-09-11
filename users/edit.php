@@ -21,7 +21,7 @@ $user_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if ($user_id <= 0) {
     $_SESSION['error_message'] = 'Invalid user ID.';
-    header('Location: list.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -32,13 +32,13 @@ try {
 
     if (!$user) {
         $_SESSION['error_message'] = 'User not found.';
-        header('Location: list.php');
+        header('Location: index.php');
         exit();
     }
 } catch (PDOException $e) {
     error_log('Database error: ' . $e->getMessage());
     $_SESSION['error_message'] = 'Failed to load user details.';
-    header('Location: list.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute($params);
 
                 $_SESSION['success_message'] = "User '{$form_data['username']}' has been updated successfully!";
-                header('Location: list.php');
+                header('Location: index.php');
                 exit;
 
             } catch (PDOException $e) {
@@ -250,7 +250,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
 
                         <div class="d-flex justify-content-between">
-                            <a href="list.php" class="btn btn-secondary">
+                            <a href="index.php" class="btn btn-secondary">
                                 <i class="bi bi-arrow-left"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-primary">

@@ -1,45 +1,47 @@
 <?php
 /**
- * Partner organisations list (admin).
+ * Foster carers list (admin).
  *
- * Server-side search on name plus a type filter, with DataTables layered
- * on top for client-side sorting and paging. The type dropdown is built
- * from the distinct values already in the table rather than a fixed list.
+ * Server-side search across name and email plus a status filter, with
+ * DataTables layered on top for client-side sorting and paging.
  *
- * Delete is a POST form with a CSRF token, so it can't be triggered by a
- * stray GET request.
+ * Status toggle and delete are both POST forms with a CSRF token, so
+ * neither can be triggered by a stray GET request.
  *
  * @var PDO $pdo
  */
 
-// include authentication and database connection
+// Include necessary files
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
 require_once __DIR__ . '/../includes/csrf.php';
-/** @var PDO $pdo */
 
 $success_message = $_SESSION['success_message'] ?? null;
 $error_message = $_SESSION['error_message'] ?? null;
 unset($_SESSION['success_message'], $_SESSION['error_message']);
 
 $search = isset($_GET['search']) ? '%' . $_GET['search'] . '%' : '%';
-$type_filter = $_GET['type'] ?? '';
+$status_filter = $_GET['status'] ?? '';
 
-$sql = "SELECT * FROM partner_organisations WHERE name LIKE :search";
+$sql = "SELECT * FROM foster_carers WHERE 
+        (first_name LIKE :search OR last_name LIKE :search OR email LIKE :search)";
 $params = [':search' => $search];
 
-if (!empty($type_filter)) {
-    $sql .= " AND organisation_type = :type";
-    $params[':type'] = $type_filter;
+if (!empty($status_filter)) {
+    $sql .= " AND status = :status";
+    $params[':status'] = $status_filter;
 }
 
-$sql .= " ORDER BY name ASC";
+$sql .= " ORDER BY last_name ASC, first_name ASC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
-$organisations = $stmt->fetchAll();
+$foster_carers = $stmt->fetchAll();
 
-$type_stmt = $pdo->query("SELECT DISTINCT organisation_type FROM partner_organisations ORDER BY organisation_type");
-$types = $type_stmt->fetchAll();
+$active_stmt = $pdo->query("SELECT COUNT(*) FROM foster_carers WHERE status = 'active'");
+$active_count = $active_stmt->fetchColumn();
+
+$total_stmt = $pdo->query("SELECT COUNT(*) FROM foster_carers");
+$total_count = $total_stmt->fetchColumn();
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +49,7 @@ $types = $type_stmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Partner Organisations - SafePaws</title>
+    <title>Foster Carers - SafePaws</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -57,10 +59,37 @@ $types = $type_stmt->fetchAll();
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Partner Organisations</h2>
+        <h2><i class="bi bi-people"></i> Foster Carers</h2>
         <a href="add.php" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Add New Organisation
+            <i class="bi bi-plus-circle"></i> Add New Foster Carer
         </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Total Carers</h5>
+                    <p class="card-text display-6"><?= $total_count ?></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Active Carers</h5>
+                    <p class="card-text display-6"><?= $active_count ?></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Inactive Carers</h5>
+                    <p class="card-text display-6"><?= $total_count - $active_count ?></p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <?php if ($success_message): ?>
@@ -80,27 +109,23 @@ $types = $type_stmt->fetchAll();
     <div class="card mb-4">
         <div class="card-body">
             <form method="GET" class="row g-3">
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <input type="text" class="form-control" name="search"
-                           placeholder="Search organisations..."
+                           placeholder="Search by name or email..."
                            value="<?= htmlspecialchars($_GET['search'] ?? '', ENT_QUOTES) ?>">
                 </div>
                 <div class="col-md-3">
-                    <select class="form-select" name="type">
-                        <option value="">All Types</option>
-                        <?php foreach ($types as $type): ?>
-                            <option value="<?= htmlspecialchars($type['organisation_type'], ENT_QUOTES) ?>"
-                                    <?= (($_GET['type'] ?? '') === $type['organisation_type']) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($type['organisation_type'], ENT_QUOTES) ?>
-                            </option>
-                        <?php endforeach; ?>
+                    <select class="form-select" name="status">
+                        <option value="">All Statuses</option>
+                        <option value="active" <?= (($_GET['status'] ?? '') === 'active') ? 'selected' : '' ?>>Active</option>
+                        <option value="inactive" <?= (($_GET['status'] ?? '') === 'inactive') ? 'selected' : '' ?>>Inactive</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <button type="submit" class="btn btn-secondary">
                         <i class="bi bi-search"></i> Search
                     </button>
-                    <a href="list.php" class="btn btn-outline-secondary">
+                    <a href="index.php" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-counterclockwise"></i> Clear
                     </a>
                 </div>
@@ -110,51 +135,62 @@ $types = $type_stmt->fetchAll();
 
     <div class="card">
         <div class="card-body">
-            <table id="organisationsTable" class="table table-striped table-hover">
+            <table id="fosterCarersTable" class="table table-striped table-hover">
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Organisation Name</th>
-                    <th>Type</th>
-                    <th>Contact Person</th>
+                    <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
+                    <th>Suburb</th>
+                    <th>Preferred Type</th>
+                    <th>Capacity</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($organisations as $org): ?>
+                <?php foreach ($foster_carers as $carer): ?>
                     <tr>
-                        <td><?= $org['organisation_id'] ?></td>
-                        <td><?= htmlspecialchars($org['name'], ENT_QUOTES) ?></td>
+                        <td><?= $carer['foster_carer_id'] ?></td>
+                        <td><?= htmlspecialchars($carer['first_name'] . ' ' . $carer['last_name'], ENT_QUOTES) ?></td>
                         <td>
-                                <span class="badge bg-info">
-                                    <?= htmlspecialchars($org['organisation_type'], ENT_QUOTES) ?>
-                                </span>
+                            <a href="mailto:<?= htmlspecialchars($carer['email'], ENT_QUOTES) ?>">
+                                <i class="bi bi-envelope"></i>
+                            </a>
                         </td>
-                        <td><?= htmlspecialchars($org['contact_person'] ?? 'N/A', ENT_QUOTES) ?></td>
+                        <td><?= htmlspecialchars($carer['phone'] ?? 'N/A', ENT_QUOTES) ?></td>
+                        <td><?= htmlspecialchars($carer['suburb'] ?? 'N/A', ENT_QUOTES) ?></td>
+                        <td><?= htmlspecialchars($carer['preferred_animal_type'] ?? 'Any', ENT_QUOTES) ?></td>
+                        <td><?= $carer['capacity'] ?></td>
                         <td>
-                            <?php if (!empty($org['email'])): ?>
-                                <a href="mailto:<?= htmlspecialchars($org['email'], ENT_QUOTES) ?>">
-                                    <i class="bi bi-envelope"></i>
-                                </a>
+                            <?php if ($carer['status'] == 'active'): ?>
+                                <span class="badge bg-success">Active</span>
                             <?php else: ?>
-                                N/A
+                                <span class="badge bg-secondary">Inactive</span>
                             <?php endif; ?>
                         </td>
-                        <td><?= htmlspecialchars($org['phone'] ?? 'N/A', ENT_QUOTES) ?></td>
                         <td>
                             <div class="btn-group" role="group">
-                                <a href="view.php?id=<?= $org['organisation_id'] ?>"
+                                <a href="view.php?id=<?= $carer['foster_carer_id'] ?>"
                                    class="btn btn-sm btn-info" title="View">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a href="edit.php?id=<?= $org['organisation_id'] ?>"
+                                <a href="edit.php?id=<?= $carer['foster_carer_id'] ?>"
                                    class="btn btn-sm btn-warning" title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>
+                                <form method="POST" action="toggle_status.php" class="d-inline">
+                                    <?= csrf_field() ?>
+                                    <input type="hidden" name="id" value="<?= $carer['foster_carer_id'] ?>">
+                                    <button type="submit"
+                                            class="btn btn-sm <?= $carer['status'] == 'active' ? 'btn-secondary' : 'btn-success' ?>"
+                                            title="<?= $carer['status'] == 'active' ? 'Deactivate' : 'Activate' ?>">
+                                        <i class="bi <?= $carer['status'] == 'active' ? 'bi-pause-circle' : 'bi-play-circle' ?>"></i>
+                                    </button>
+                                </form>
                                 <button type="button"
-                                        onclick="confirmDelete(<?= (int)$org['organisation_id'] ?>, '<?= htmlspecialchars($org['name'], ENT_QUOTES) ?>')"
+                                        onclick="confirmDelete(<?= (int)$carer['foster_carer_id'] ?>, '<?= htmlspecialchars($carer['first_name'] . ' ' . $carer['last_name'], ENT_QUOTES) ?>')"
                                         class="btn btn-sm btn-danger" title="Delete">
                                     <i class="bi bi-trash"></i>
                                 </button>
@@ -176,12 +212,12 @@ $types = $type_stmt->fetchAll();
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete <strong id="deleteOrgName"></strong>?</p>
+                <p>Are you sure you want to delete foster carer <strong id="deleteCarerName"></strong>?</p>
                 <p class="text-danger"><i class="bi bi-exclamation-triangle"></i> This action cannot be undone.</p>
             </div>
             <form method="POST" action="delete.php">
                 <?= csrf_field() ?>
-                <input type="hidden" name="id" id="deleteOrgId">
+                <input type="hidden" name="id" id="deleteCarerId">
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-danger">
@@ -200,21 +236,21 @@ $types = $type_stmt->fetchAll();
 
 <script>
     $(document).ready(function() {
-        $('#organisationsTable').DataTable({
+        $('#fosterCarersTable').DataTable({
             "pageLength": 15,
             "order": [[0, 'asc']],
             "columnDefs": [
-                { "orderable": false, "targets": 6 }
+                { "targets": [8], "orderable": false, "searchable": false }
             ],
             "language": {
-                "emptyTable": "No organisations found"
+                "emptyTable": "No foster carers found"
             }
         });
     });
 
     function confirmDelete(id, name) {
-        document.getElementById('deleteOrgName').textContent = name;
-        document.getElementById('deleteOrgId').value = id;
+        document.getElementById('deleteCarerName').textContent = name;
+        document.getElementById('deleteCarerId').value = id;
         new bootstrap.Modal(document.getElementById('deleteModal')).show();
     }
 </script>

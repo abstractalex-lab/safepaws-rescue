@@ -81,17 +81,17 @@ if (!isset($current_user)) {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= $base ?>/foster_carers/list.php">
+                        <a class="nav-link" href="<?= $base ?>/foster_carers/index.php">
                             <i class="bi bi-people"></i> Foster Carers
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= $base ?>/partner_organisations/list.php">
+                        <a class="nav-link" href="<?= $base ?>/partner_organisations/index.php">
                             <i class="bi bi-building"></i> Partners
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= $base ?>/users/list.php">
+                        <a class="nav-link" href="<?= $base ?>/users/index.php">
                             <i class="bi bi-person-gear"></i> Users
                         </a>
                     </li>

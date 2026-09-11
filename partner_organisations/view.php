@@ -20,7 +20,7 @@ $organisation_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 if ($organisation_id <= 0) {
     $_SESSION['error_message'] = 'Invalid organisation ID.';
-    header('Location: list.php');
+    header('Location: index.php');
     exit();
 }
 
@@ -31,13 +31,13 @@ try {
 
     if (!$organisation) {
         $_SESSION['error_message'] = 'Organisation not found.';
-        header('Location: list.php');
+        header('Location: index.php');
         exit();
     }
 } catch (PDOException $e) {
     error_log('Database error: ' . $e->getMessage());
     $_SESSION['error_message'] = 'Failed to load organisation details.';
-    header('Location: list.php');
+    header('Location: index.php');
     exit();
 }
 ?>
@@ -65,7 +65,7 @@ try {
                            class="btn btn-warning btn-sm">
                             <i class="bi bi-pencil"></i> Edit
                         </a>
-                        <a href="list.php" class="btn btn-secondary btn-sm">
+                        <a href="index.php" class="btn btn-secondary btn-sm">
                             <i class="bi bi-arrow-left"></i> Back
                         </a>
                     </div>

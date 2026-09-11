@@ -130,18 +130,17 @@ try {
             </a>
         </div>
         <div class="col-md-3">
-            <a href="foster_carers/list.php" class="btn btn-outline-dark w-100 py-3">
+            <a href="foster_carers/index.php" class="btn btn-outline-dark w-100 py-3">
                 <i class="bi bi-people d-block fs-3"></i> Foster Carers
             </a>
         </div>
         <div class="col-md-3">
-            <a href="partner_organisations/list.php" class="btn btn-outline-dark w-100 py-3">
+            <a href="partner_organisations/index.php" class="btn btn-outline-dark w-100 py-3">
                 <i class="bi bi-building d-block fs-3"></i> Partners
             </a>
         </div>
         <div class="col-md-3">
-            <!-- TODO: Add an user list in the future, since now just a placeholder link -->
-            <a href="users/list.php" class="btn btn-outline-dark w-100 py-3">
+            <a href="users/index.php" class="btn btn-outline-dark w-100 py-3">
                 <i class="bi bi-person-gear d-block fs-3"></i> Users
             </a>
         </div>
