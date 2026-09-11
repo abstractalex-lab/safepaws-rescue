@@ -1,8 +1,19 @@
 <?php
-// foster_carers/view.php
+/**
+ * Foster carer detail (admin).
+ *
+ * Shows the carer's details alongside the animals currently placed with
+ * them, and how much of their fostering capacity is used.
+ *
+ * Remaining capacity is advisory rather than enforced - nothing prevents
+ * assigning an animal to a carer who is already full.
+ *
+ * @var PDO $pdo
+ */
+
+// Include necessary files
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
-/** @var PDO $pdo */
 
 $foster_carer_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 

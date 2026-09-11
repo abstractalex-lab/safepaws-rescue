@@ -1,9 +1,20 @@
 <?php
-// foster_carers/toggle_status.php
+/**
+ * Toggle foster carer active status (admin).
+ *
+ * Action script with no output of its own. Flips the carer between
+ * active and inactive, then redirects back to the list with a flash
+ * message.
+ *
+ * Requires POST with a valid CSRF token, so a stray GET (prefetch, pasted URL, crawler) can't change a record.
+ *
+ * @var PDO $pdo
+ */
+
+// Include necessary files
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
 require_once __DIR__ . '/../includes/csrf.php';
-/** @var PDO $pdo */
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_verify($_POST['csrf_token'] ?? null)) {
     header('Location: list.php');

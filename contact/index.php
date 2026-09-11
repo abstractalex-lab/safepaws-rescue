@@ -1,7 +1,19 @@
 <?php
-// contact/index.php - Public contact form (no login required)
+/**
+ * Public contact form.
+ *
+ * Does NOT include authentication.php - this is one of the pages the
+ * brief requires to remain publicly accessible.
+ *
+ * On success the form is replaced by a confirmation rather than
+ * redirecting, so the visitor stays on the page they submitted from.
+ * Optional phone numbers are stored as NULL rather than empty strings.
+ *
+ * @var PDO $pdo
+ */
+
+// Require database connection
 require_once __DIR__ . '/../connection.php';
-/** @var PDO $pdo */
 
 $errors = [];
 $success = false;

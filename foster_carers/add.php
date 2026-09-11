@@ -1,11 +1,23 @@
 <?php
-// foster_carers/add.php
+/**
+ * Add foster carer (admin).
+ *
+ * Input collection and validation are shared with edit.php through
+ * includes/foster_carer_validation.php, so both forms enforce the same
+ * rules. Optional fields are stored as NULL rather than empty strings.
+ *
+ * A duplicate email is caught both by the unique constraint (error 1062)
+ * and reported against the email field.
+ *
+ * @var PDO $pdo
+ */
+
+// Include necessary files
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/foster_carer_constants.php';
 require_once __DIR__ . '/../includes/foster_carer_validation.php';
-/** @var PDO $pdo */
 
 $errors = [];
 $form_data = [];

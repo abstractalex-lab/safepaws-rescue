@@ -1,6 +1,14 @@
 <?php
-// includes/foster_carer_validation.php
-// shared input handling for the foster carer add/edit forms.
+/**
+ * Foster carer input handling.
+ *
+ * Shared by the foster carer add and edit forms so both enforce the same
+ * rules. collect_foster_carer_input() normalises the POST data;
+ * validate_foster_carer_input() returns an array of errors keyed by field
+ * name, empty when the input is valid.
+ *
+ * Requires includes/foster_carer_constants.php to be loaded first.
+ */
 
 function collect_foster_carer_input(array $post): array
 {

@@ -1,9 +1,20 @@
 <?php
-// foster_carers/list.php
+/**
+ * Foster carers list (admin).
+ *
+ * Server-side search across name and email plus a status filter, with
+ * DataTables layered on top for client-side sorting and paging.
+ *
+ * Status toggle and delete are both POST forms with a CSRF token, so
+ * neither can be triggered by a stray GET request.
+ *
+ * @var PDO $pdo
+ */
+
+// Include necessary files
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
 require_once __DIR__ . '/../includes/csrf.php';
-/** @var PDO $pdo */
 
 $success_message = $_SESSION['success_message'] ?? null;
 $error_message = $_SESSION['error_message'] ?? null;

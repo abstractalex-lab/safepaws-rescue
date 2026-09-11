@@ -1,8 +1,17 @@
 <?php
-// partner_organisations/add.php
+/**
+ * Add partner organisation (admin).
+ *
+ * Name and type are required; the remaining fields are optional and
+ * validated only when supplied. Partner organisations are a standalone
+ * entity with no foreign keys to or from other tables.
+ *
+ * @var PDO $pdo
+ */
+
+// include authentication and database connection
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
-/** @var PDO $pdo */
 
 $errors = [];
 $success = false;

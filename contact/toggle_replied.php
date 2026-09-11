@@ -1,9 +1,21 @@
 <?php
-// contact/toggle_replied.php - Toggle replied status (login required)
+/**
+ * Toggle enquiry replied status (admin).
+ *
+ * Action script with no output of its own. Sets the replied flag based
+ * on an explicit action value rather than flipping whatever is stored,
+ * so two rapid submissions can't leave it in the wrong state.
+ *
+ * Requires POST with a valid CSRF token, so a stray GET (prefetch,
+ * pasted URL, crawler) can't change a record.
+ *
+ * @var PDO $pdo
+ */
+
+// Require authentication and database connection
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
 require_once __DIR__ . '/../includes/csrf.php';
-/** @var PDO $pdo */
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_verify($_POST['csrf_token'] ?? null)) {
     header('Location: list.php');

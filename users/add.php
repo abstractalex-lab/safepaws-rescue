@@ -1,9 +1,21 @@
 <?php
-// users/add.php
+/**
+ * Add system user (admin).
+ *
+ * Creates a staff login for the administration area. Passwords are hashed
+ * with password_hash() before storage and never held in plain text.
+ *
+ * Username uniqueness is checked before the insert for a field-level
+ * error, and the unique constraint (error 1062) is caught as a backstop
+ * against two admins submitting the same username at once.
+ *
+ * @var PDO $pdo
+ */
+
+// Include necessary files
 require_once __DIR__ . '/../auth/authentication.php';
 require_once __DIR__ . '/../connection.php';
 require_once __DIR__ . '/../includes/csrf.php';
-/** @var PDO $pdo */
 
 $errors = [];
 $form_data = [];
