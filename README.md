@@ -26,8 +26,8 @@ Completed as **Assessment 3 (20%)** for **FIT2104 – Web Database Systems** at 
 
 ### ✍️ Authors
 
-**Alex Bui** - schema, authentication, animals, adoption applications, public pages, dashboard\
-**Bhudis Chitchonthan** - foster carers, partner organisations, users, contact enquiries, CSRF helper
+**Alex B.** - schema, authentication, animals, adoption applications, public pages, dashboard\
+**Tae C.** - foster carers, partner organisations, users, contact enquiries, CSRF helper
 
 
 ## ⬇️ Getting Started
